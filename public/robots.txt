@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://civil-creative-hub.lovable.app/sitemap.xml

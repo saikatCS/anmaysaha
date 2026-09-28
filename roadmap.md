@@ -1,0 +1,10 @@
+- [x] Keep the static portfolio and dedicated phone presentation intact.
+- [x] Auto-advance phone-only artwork, featured projects, and service cards with manual swipe support.
+- [x] Style phone service cards with gradient borders and credentials as green-gradient-rimmed circles.
+- [x] Verify phone layouts and interactions; confirm desktop remains unchanged.
+- [x] Deliver a dedicated Green Constructions phone page with the uploaded GC logo, sections, project case studies and enquiry sharing.
+- [x] Check 360/375/390/414/430 layouts, project interactions and desktop preservation.
+- [x] Keep the GC logo circular throughout the mobile page and replace the selected-project cards’ building symbol with the supplied planning visual, clearly labelled as illustrative.
+- [x] Verify the mobile project cards and logo at phone widths without changing desktop.
+- [x] Centralize and update Green Constructions copy, remove the stage-photography section, and add ecosystem logos with non-clickable unavailable social icons.
+- [x] Show the full mobile About image and reduce Anmay Art’s mobile credential circles.

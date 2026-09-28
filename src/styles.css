@@ -1,0 +1,207 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Anmay Art design system.
+ * Brand palette is fixed by the client brief — do not substitute values.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-forest: var(--forest);
+  --color-forest-deep: var(--forest-deep);
+  --color-gold: var(--gold);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-stone: var(--stone);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--forest);
+  --color-chart-2: var(--forest-deep);
+  --color-chart-3: var(--gold);
+  --color-chart-4: var(--muted-foreground);
+  --color-chart-5: var(--ink);
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Great Vibes", cursive;
+  --shadow-soft: 0 10px 30px -18px rgba(26, 26, 26, 0.35);
+  --shadow-lift: 0 22px 50px -24px rgba(26, 26, 26, 0.4);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --forest: #5c7a3d;
+  --forest-deep: #3a5227;
+  --gold: #b8935a;
+  --ink: #1a1a1a;
+  --cream: #fafaf7;
+  --stone: #f5f5f2;
+
+  --background: #fafaf7;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #5c7a3d;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f2;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f5f5f2;
+  --muted-foreground: #6b6b6b;
+  --accent: #eef1e8;
+  --accent-foreground: #3a5227;
+  --destructive: #b4382f;
+  --destructive-foreground: #ffffff;
+  --border: #e6e6e0;
+  --input: #e0e0d8;
+  --ring: #5c7a3d;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #5c7a3d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef1e8;
+  --sidebar-accent-foreground: #3a5227;
+  --sidebar-border: #e6e6e0;
+  --sidebar-ring: #5c7a3d;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #fafaf7;
+  --card: #232323;
+  --card-foreground: #fafaf7;
+  --popover: #232323;
+  --popover-foreground: #fafaf7;
+  --primary: #7d9c58;
+  --primary-foreground: #1a1a1a;
+  --secondary: #262626;
+  --secondary-foreground: #fafaf7;
+  --muted: #262626;
+  --muted-foreground: #a3a3a0;
+  --accent: #2d3526;
+  --accent-foreground: #dbe6cd;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.16);
+  --ring: #7d9c58;
+  --sidebar: #232323;
+  --sidebar-foreground: #fafaf7;
+  --sidebar-primary: #7d9c58;
+  --sidebar-primary-foreground: #1a1a1a;
+  --sidebar-accent: #2d3526;
+  --sidebar-accent-foreground: #dbe6cd;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: #7d9c58;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    letter-spacing: 0;
+  }
+}
+
+@utility script {
+  font-family: var(--font-script);
+  font-weight: 400;
+}
+
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+@utility hero-mask {
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+@utility reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 84px; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.achievement-track { display: flex; width: max-content; animation: marquee 42s linear infinite; }
+.achievement-track:hover, .achievement-track:focus-within { animation-play-state: paused; }
+.achievement-window { overflow-x: auto; scrollbar-width: none; }
+.achievement-window::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .achievement-track { animation: none; } .reveal { opacity: 1; transform: none; transition: none; } }
+.achievement-track { gap: 0; padding: 0; }
+.achievement-track > * { margin-right: 1.25rem; }
+
+/* Mobile experience */
+.m-noscroll { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.m-noscroll::-webkit-scrollbar { display: none; }
+@keyframes m-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes m-menu { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.m-rise { animation: m-rise 0.7s ease both; }
+.m-menu { animation: m-menu 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.m-pb { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+.m-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.m-leaf { background-image: radial-gradient(circle at 85% 20%, rgba(250,250,247,0.10) 0 60px, transparent 61px), radial-gradient(circle at 100% 100%, rgba(250,250,247,0.07) 0 120px, transparent 121px); }
+.m-service-card { border: 1.5px solid transparent; background: linear-gradient(var(--color-card), var(--color-card)) padding-box, linear-gradient(135deg, var(--color-forest-deep), var(--color-forest), var(--color-gold)) border-box; box-shadow: 0 8px 20px -16px var(--color-forest-deep); }
+.m-credential-circle { border: 3px solid transparent; border-radius: 50%; background: linear-gradient(var(--color-card), var(--color-accent)) padding-box, linear-gradient(140deg, var(--color-forest-deep), var(--color-forest), var(--color-gold), var(--color-forest)) border-box; box-shadow: 0 10px 24px -18px var(--color-forest-deep); }
+@media (prefers-reduced-motion: reduce) { .m-rise, .m-menu { animation: none; } }

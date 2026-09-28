@@ -1,0 +1,1 @@
+ALTER TABLE public.gc_projects ADD COLUMN IF NOT EXISTS cover_image text;
