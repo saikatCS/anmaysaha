@@ -1,14 +1,22 @@
+// cspell:ignore CRETOVERSE Anmay Saha Chowmohoni Agartala noscroll
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, Award, Building2, ChevronLeft, ChevronRight, ClipboardCheck, FileCheck2,
   GraduationCap, HardHat, Home as HomeIcon, Lamp, LayoutGrid, Leaf, MapPin, Menu, MessageSquare,
-  Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink,
+  Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink, DraftingCompass, Paintbrush, Layers3
 } from "lucide-react";
 import { Brand } from "@/components/site/Brand";
 import { contact, credentials, images, journey, services } from "@/lib/portfolio";
 import { useArtworks, useProjects } from "@/lib/remote-content";
 import siteAsset from "@/assets/green-constructions-site.png";
+import portrait from "@/assets/portrait.png";
+import card1 from "@/assets/card1.png";
+import card2 from "@/assets/card2.png";
+import card3 from "@/assets/card3.png";
+import card4 from "@/assets/card4.png";
+import card5 from "@/assets/card5.png";
+import card6 from "@/assets/card6.png";
 
 const CRETOVERSE = "https://cretoverse.com";
 const menuLinks = [
@@ -30,7 +38,7 @@ export function MobileHeader() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-forest-deep/10 bg-cream/95 backdrop-blur md:hidden">
-        <div className="grid h-[68px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5">
+        <div className="grid h-17 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5">
           <Link to="/" aria-label="Anmay Art home" className="min-w-0"><Brand compact /></Link>
           <div className="flex items-center">
             <Link to="/projects" aria-label="Browse projects" className="grid h-11 w-11 place-items-center rounded-full text-forest-deep focus-visible:outline-2 focus-visible:outline-primary"><Search size={22} strokeWidth={1.8} /></Link>
@@ -39,8 +47,8 @@ export function MobileHeader() {
         </div>
       </header>
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Menu" className="m-menu fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-cream px-5 pb-10 md:hidden">
-          <div className="flex h-[68px] shrink-0 items-center justify-between">
+        <div role="dialog" aria-modal="true" aria-label="Menu" className="m-menu fixed inset-0 z-70 flex flex-col overflow-y-auto bg-cream px-5 pb-10 md:hidden">
+          <div className="flex h-17 shrink-0 items-center justify-between">
             <Brand compact />
             <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className="grid h-11 w-11 place-items-center rounded-full border border-forest-deep/15 text-forest-deep"><X size={22} /></button>
           </div>
@@ -73,7 +81,7 @@ export function MobileBottomNav() {
   ] as const;
   return (
     <nav aria-label="Primary" className="m-safe-bottom fixed inset-x-0 bottom-0 z-50 border-t border-forest-deep/10 bg-card/95 backdrop-blur md:hidden">
-      <ul className="grid h-[72px] grid-cols-5">
+      <ul className="grid h-18 grid-cols-5">
         {items.map((it) => (
           <li key={it.label}>
             <Link to={it.to} {...("hash" in it ? { hash: it.hash } : {})}
@@ -144,7 +152,7 @@ export function MobileLightbox({ items, index, onClose, onIndex }: { items: { sr
   if (index === null || !items[index]) return null;
   const go = (d: number) => onIndex((index + d + items.length) % items.length);
   return (
-    <div role="dialog" aria-modal="true" aria-label="Image viewer" className="fixed inset-0 z-[80] flex flex-col bg-ink text-cream"
+    <div role="dialog" aria-modal="true" aria-label="Image viewer" className="fixed inset-0 z-80 flex flex-col bg-ink text-cream"
       onTouchStart={(e) => (startX.current = e.touches[0]?.clientX ?? null)}
       onTouchEnd={(e) => { if (startX.current === null) return; const dx = (e.changedTouches[0]?.clientX ?? startX.current) - startX.current; if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1); startX.current = null; }}>
       <div className="flex h-16 items-center justify-between px-4">
@@ -170,15 +178,13 @@ const credCards = [
   { t: "AMC Approved", s: "Building Planner", Icon: Building2 },
   { t: "Associate Member", s: "Institution of Engineers (India)", Icon: Users },
 ];
-const serviceCards = [
-  { t: "Building Planning & Design", Icon: Ruler },
-  { t: "Construction Management", Icon: HardHat },
-  { t: "Interior Design Solutions", Icon: Lamp },
-  { t: "Renovation & Remodeling", Icon: HomeIcon },
-  { t: "Structural Consultation", Icon: Wrench },
-  { t: "AMC Approved Building Planner", Icon: FileCheck2 },
-  { t: "House Planning", Icon: Building2 },
-  { t: "Building Approval / Planning", Icon: ClipboardCheck },
+const serviceCardsData = [
+  { t: "Building Planning & Design", desc: "Thoughtful plans that balance space, purpose and possibility.", Icon: DraftingCompass, img: card1 },
+  { t: "House Planning", desc: "Homes shaped around the way people actually live.", Icon: HomeIcon, img: card2 },
+  { t: "Construction Management", desc: "An attentive approach to execution, coordination and quality.", Icon: HardHat, img: card3 },
+  { t: "Interior Design", desc: "Functional and aesthetic interiors that feel like home.", Icon: Paintbrush, img: card4 },
+  { t: "Structural Consultation", desc: "Safe, efficient and practical structural solutions.", Icon: Ruler, img: card5 },
+  { t: "Renovation & Remodeling", desc: "Transforming existing spaces into better experiences.", Icon: Layers3, img: card6 },
 ];
 const useFeatured = () => { const projects = useProjects(); return [
   { key: "the-elite", title: "THE ELITE", category: "Hotel & Restaurant", location: "Orient Chowmohoni, Agartala", image: null as string | null, gc: true },
@@ -252,17 +258,33 @@ export function MobileHome() {
   const projRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
   const credI = useAutoCarousel(credRef, credCards.length, 3800);
-  const serviceI = useAutoCarousel(serviceRef, serviceCards.length, 3200);
+  const serviceI = useAutoCarousel(serviceRef, serviceCardsData.length, 3200);
   const artworks = useArtworks();
   const featured = useFeatured();
   const projI = useAutoCarousel(projRef, featured.length, 3800);
   const artI = useAutoCarousel(artRef, artworks.length, 3400);
+
+  const [inView, setInView] = useState(false);
+  const aboutRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = aboutRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setInView(true);
+      }
+    }, { threshold: 0.2 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="overflow-x-hidden bg-cream md:hidden">
       {/* HERO */}
       <section className="relative px-5 pt-6 pb-2">
         <div className="m-rise">
-          <p className="text-[11px] leading-[1.5] font-semibold tracking-[0.14em] text-primary uppercase">Designing spaces.<br />Building dreams.</p>
+          <p className="text-[11px] leading-normal font-semibold tracking-[0.14em] text-primary uppercase">Designing spaces.<br />Building dreams.</p>
           <h1 className="mt-3 font-serif text-[clamp(2.2rem,11vw,3rem)] leading-[1.08] font-semibold text-ink">
             I Design.<br />I Plan.<br />I Build<br />with <span className="text-primary">Purpose.</span>
           </h1>
@@ -273,7 +295,7 @@ export function MobileHome() {
           </div>
         </div>
         <div className="m-rise relative mt-7" style={{ animationDelay: "140ms" }}>
-          <img src={images.hero} alt="Contemporary residential architecture with landscaping" fetchPriority="high" className="aspect-[4/5] w-full rounded-[22px] object-cover object-[60%_center]" />
+          <img src={images.hero} alt="Contemporary residential architecture with landscaping" fetchPriority="high" className="aspect-4/5 w-full rounded-[22px] object-cover object-[60%_center]" />
           <Link to="/green-constructions" className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-forest-deep/95 px-4 py-3 text-cream shadow-soft backdrop-blur">
             <Leaf size={24} className="shrink-0 text-cream/80" />
             <span className="min-w-0 flex-1 leading-tight">
@@ -290,7 +312,7 @@ export function MobileHome() {
       <section aria-label="Credentials" className="pt-6">
         <div ref={credRef} aria-label="Credentials, swipe to explore" className="m-noscroll flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1">
           {credCards.map(({ t, s, Icon }) => (
-            <div key={t} className="m-credential-circle flex h-[132px] w-[132px] shrink-0 snap-start flex-col items-center justify-center px-3 text-center">
+            <div key={t} className="m-credential-circle flex h-33 w-33 shrink-0 snap-start flex-col items-center justify-center px-3 text-center">
               <Icon size={25} strokeWidth={1.5} className="text-forest-deep" />
               <p className="mt-2 text-[14px] font-bold leading-tight text-forest-deep">{t}</p>
               <p className="mt-1 text-[10px] leading-snug text-ink/75">{s}</p>
@@ -302,16 +324,53 @@ export function MobileHome() {
 
       {/* ABOUT */}
       <section className="px-5 pt-7">
-        <div className="relative overflow-hidden rounded-[20px] border border-forest-deep/10 bg-stone">
-          <div className="relative z-10 w-[62%] p-5 pb-6">
-            <Label>About me</Label>
-            <Heading className="text-[1.6rem]">Crafting Spaces with Passion &amp; Precision.</Heading>
-            <p className="mt-3 text-[13.5px] leading-[1.6] text-muted-foreground">B.Tech Civil Engineer & M.Tech Materials Science, AMC-approved Building Planner and Associate Member of the Institution of Engineers (India). Proprietor of Green Constructions — planning, construction and interiors built on quality, structural integrity and sustainable design.</p>
-            <Link to="/about" className={`${pill} mt-5 whitespace-nowrap px-4 text-[11px]`}>KNOW MORE ABOUT ME <ArrowRight size={15} /></Link>
+        <div ref={aboutRef} className="relative aspect-[0.54] min-h-160 overflow-hidden rounded-[30px] border-2 border-[#4f6f48] bg-[#fcfcf8] p-6 shadow-[0_12px_40px_rgba(44,53,43,0.12)]">
+          <div className="absolute top-16 right-[35%] grid grid-cols-5 gap-2 opacity-25">
+            {Array.from({ length: 15 }).map((_, i) => <span key={i} className="h-1 w-1 rounded-full bg-forest-deep" />)}
           </div>
-          <div aria-hidden className="absolute right-[-18%] bottom-[-10%] h-[78%] w-[70%] rounded-[46%_54%_38%_62%/55%_45%_55%_45%] bg-primary/25" />
-          <Leaf aria-hidden size={46} strokeWidth={1} className="absolute top-6 right-5 text-primary/35" />
-          <img src={images.portrait} alt="Anmay Saha" loading="lazy" className="absolute right-0 bottom-0 h-[88%] w-[42%] object-cover object-top [mask-image:linear-gradient(to_bottom,black_85%,transparent)]" />
+          <div className="absolute top-8 right-5 text-forest-deep">
+            <Leaf size={56} strokeWidth={1.35} />
+          </div>
+          <span className="absolute top-16 right-3 h-24 w-px bg-gold" />
+
+          <div className="relative z-10 flex items-center gap-3">
+            <span className="h-0.75 w-8 bg-gold" />
+            <p className="text-[11px] font-semibold tracking-[0.24em] text-forest-deep">ABOUT ME</p>
+          </div>
+
+          <h2 className="relative z-10 mt-6 max-w-[62%] font-serif text-[clamp(2.1rem,8.2vw,3.3rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-ink text-center">
+            Crafting<br />
+            <span className="font-medium italic text-forest">Spaces</span><br />
+            with Passion<br />
+            <span className="inline-flex items-center justify-center gap-1.5 w-full">
+              <span>&amp;</span> Precision.
+            </span>
+          </h2>
+
+          <div className="relative z-10 mt-5 max-w-[55%]">
+            <span className="mb-3 block h-0.75 w-10 bg-gold" />
+            <p className="text-[clamp(0.65rem,2.45vw,0.85rem)] leading-[1.48] text-muted-foreground">
+              B.Tech Civil Engineer &amp; M.Tech Materials Science, AMC-approved Building Planner and Associate Member of the Institution of Engineers (India). Proprietor of Green Constructions — planning, construction and interiors built on quality, structural integrity and sustainable design.
+            </p>
+            <p className="mt-4 font-script text-[clamp(1.8rem,7vw,3rem)] leading-none text-forest-deep">Anmay Saha</p>
+            <span className="mt-3 block h-0.75 w-10 bg-gold" />
+            <div className="mt-2.5 space-y-1 text-[clamp(0.5rem,1.8vw,0.68rem)] font-semibold tracking-[0.18em] text-muted-foreground">
+              <p>CIVIL ENGINEER</p>
+              <p>BUILDING PLANNER</p>
+              <p>CONSTRUCTION PROFESSIONAL</p>
+            </div>
+          </div>
+
+          <Link to="/about" className="absolute bottom-5 left-6 right-[24%] z-20 inline-flex min-h-10 items-center justify-between rounded-full bg-forest-deep px-4 text-[clamp(0.58rem,2.2vw,0.8rem)] font-bold tracking-[0.06em] text-cream shadow-md transition active:scale-[0.98]">
+            <span>Know More</span>
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold text-cream">
+              <ArrowRight size={17} strokeWidth={2.5} />
+            </span>
+          </Link>
+
+          <div className={`absolute top-[17%] right-[-10%] bottom-[-2%] z-0 w-[52%] overflow-hidden border-l-4 border-t-4 border-[#4f6f48] bg-forest-deep/10 rounded-[48%_0_0_42%/18%_0_0_64%] shadow-[-12px_0_28px_rgba(44,53,43,0.12)] transition-transform duration-1000 ease-out ${inView ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}>
+            <img src={portrait} alt="Anmay Saha" loading="lazy" className="h-full w-full object-cover object-top" />
+          </div>
         </div>
       </section>
 
@@ -319,14 +378,29 @@ export function MobileHome() {
       <section id="m-services" className="scroll-mt-20 px-5 pt-10">
         <SectionHead label="My services" title="What I Do" link={<Link to="/" hash="services" className="flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-forest-deep">View All <ArrowRight size={16} /></Link>} />
         <div ref={serviceRef} aria-label="Services, swipe to explore" className="m-noscroll -mx-5 mt-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 py-1">
-          {serviceCards.map(({ t, Icon }) => (
-            <div key={t} className="m-service-card flex h-[112px] w-[min(76vw,290px)] shrink-0 snap-center items-center gap-4 rounded-lg px-5">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-accent text-forest-deep"><Icon size={25} strokeWidth={1.5} /></span>
-              <span className="min-w-0 text-[15px] font-semibold leading-snug text-ink">{t}</span>
-            </div>
+          {serviceCardsData.map(({ t, desc, Icon, img }, i) => (
+            <Link key={t} to="/" hash="contact" className="group relative flex h-45 w-[min(74vw,260px)] shrink-0 snap-center overflow-hidden rounded-4xl border border-stone-200/70 bg-white p-3.5 shadow-sm">
+              <div className="relative z-10 flex w-[58%] flex-col justify-between pr-1">
+                <div>
+                  <div className="mb-1.5 flex items-center gap-1.5">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-white">
+                      <Icon size={12} strokeWidth={1.75} />
+                    </div>
+                    <span className="text-[10px] font-medium tracking-widest text-stone-400">0{i + 1}</span>
+                    <span className="h-px w-3 bg-stone-300" />
+                  </div>
+                  <h3 className="font-serif text-[12px] leading-tight text-stone-900 group-hover:text-primary">{t}</h3>
+                  <p className="mt-1 line-clamp-2 text-[9.5px] leading-relaxed text-stone-500">{desc}</p>
+                </div>
+              </div>
+              <div className="absolute inset-y-0 right-0 w-[46%] overflow-hidden rounded-l-[50%] bg-stone-100 rounded-[52%_0_0_52%/50%_0_0_50%]">
+                <img src={img} alt={t} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-black/10 via-transparent to-transparent" />
+              </div>
+            </Link>
           ))}
         </div>
-        <Dots count={serviceCards.length} active={serviceI} />
+        <Dots count={serviceCardsData.length} active={serviceI} />
       </section>
 
       {/* FEATURED PROJECTS */}
@@ -338,7 +412,7 @@ export function MobileHome() {
               <>
                 {p.image ? <img src={p.image} alt={p.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" /> :
                   <div className="absolute inset-0 bg-forest-deep m-leaf"><Building2 size={64} strokeWidth={1} className="absolute top-6 right-6 text-cream/25" /><p className="absolute top-14 left-5 max-w-[70%] text-[12px] text-cream/60">Project photography coming soon</p></div>}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-ink/80 via-ink/10 to-transparent" />
                 <span className="absolute top-4 left-4 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground">{p.category}</span>
                 <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 text-cream">
                   <div className="min-w-0"><p className="font-serif text-2xl leading-tight">{p.title}</p><p className="mt-1 flex items-center gap-1 text-[12.5px] text-cream/80"><MapPin size={13} className="shrink-0" /><span className="truncate">{p.location}</span></p></div>
@@ -346,7 +420,7 @@ export function MobileHome() {
                 </div>
               </>
             );
-            const cls = "relative block aspect-[16/11] w-full shrink-0 snap-center overflow-hidden rounded-[20px]";
+            const cls = "relative block aspect-[16/11] w-full shrink-0 snap-center overflow-hidden rounded-4xl";
             return p.gc ? <Link key={p.key} to="/green-constructions" className={cls}>{inner}</Link> :
               <Link key={p.key} to="/projects/$slug" params={{ slug: p.key }} className={cls}>{inner}</Link>;
           })}
@@ -356,7 +430,7 @@ export function MobileHome() {
 
       {/* CTA */}
       <section className="px-5 pt-10">
-        <div className="m-leaf relative overflow-hidden rounded-[20px] bg-forest-deep p-6 text-cream">
+        <div className="m-leaf relative overflow-hidden rounded-4xl bg-forest-deep p-6 text-cream">
           <Leaf aria-hidden size={110} strokeWidth={0.7} className="absolute -right-4 -bottom-4 text-cream/10" />
           <Label light>Let's work together</Label>
           <Heading light className="text-[1.75rem]">Have a Project in Mind?</Heading>
@@ -372,7 +446,7 @@ export function MobileHome() {
         <ol className="relative mt-8 ml-2 border-l-2 border-primary/40">
           {journey.map((j) => (
             <li key={j.role + j.organization} className="relative pb-7 pl-6 last:pb-0">
-              <span className="absolute top-1 -left-[9px] h-4 w-4 rounded-full border-4 border-card bg-primary" />
+              <span className="absolute top-1 -left-2.25 h-4 w-4 rounded-full border-4 border-card bg-primary" />
               <p className="text-[15px] font-semibold text-ink">{j.role}</p>
               <p className="text-[13px] font-semibold text-primary">{j.organization}</p>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">{j.description}</p>
@@ -414,7 +488,7 @@ export function MobileHome() {
         <div ref={artRef} aria-label="Artworks, swipe to explore" className="m-noscroll mt-6 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5">
           {artworks.map((a) => (
             <Link key={a.slug} to="/artworks/$slug" params={{ slug: a.slug }} className="w-[62%] shrink-0 snap-start">
-              <img src={a.image} alt={a.title} loading="lazy" className="aspect-[4/5] w-full rounded-[18px] object-cover" />
+              <img src={a.image} alt={a.title} loading="lazy" className="aspect-4/5 w-full rounded-[18px] object-cover" />
               <p className="mt-2.5 font-serif text-lg text-ink">{a.title}</p>
             </Link>
           ))}
@@ -424,10 +498,10 @@ export function MobileHome() {
       </section>
 
       {/* GREEN CONSTRUCTIONS */}
-      <section className="relative isolate min-h-[520px] overflow-hidden">
+      <section className="relative isolate min-h-130 overflow-hidden">
         <img src={siteAsset} alt="Engineer reviewing plans on a construction site" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover object-[30%_center]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest-deep via-forest-deep/75 to-forest-deep/30" />
-        <div className="flex min-h-[520px] flex-col justify-end px-5 pt-16 pb-10 text-cream">
+        <div className="absolute inset-0 -z-10 bg-linear-to-t from-forest-deep via-forest-deep/75 to-forest-deep/30" />
+        <div className="flex min-h-130 flex-col justify-end px-5 pt-16 pb-10 text-cream">
           <p className="text-[12px] font-bold tracking-[0.24em] text-cream/80">GREEN CONSTRUCTIONS</p>
           <h2 className="mt-3 font-serif text-[2.2rem] leading-[1.1]">Built with intention.<br />Led with care.</h2>
           <p className="mt-4 text-[13px] text-cream/75">Founder &amp; Proprietor</p>

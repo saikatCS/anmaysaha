@@ -10,7 +10,7 @@ import { GreenEcosystemLinks } from '@/components/green-ecosystem-links';
 import siteAsset from '@/assets/green-constructions-site.png';
 import logo from '@/assets/gc-logo-full.png';
 import planningVisual from '@/assets/planning-visual.png';
-import portrait from '@/assets/portrait.jpg';
+import portrait from '@/assets/portrait.png';
 import '@/styles/green-constructions-mobile.css';
 
 const nav = [ ['HOME','home',Home], ['PROJECTS','projects',Building2], ['SERVICES','services',Layers3], ['PROCESS','process',DraftingCompass], ['CONTACT','contact',ArrowUpRight] ] as const;

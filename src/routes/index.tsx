@@ -4,9 +4,98 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SiteLayout } from '@/components/site/Layout';
-import { Trust, AboutSection, ExperienceSection, ServicesSection, ProcessSection, ProjectsSection, EducationSection, AchievementsSection, VisualTransition, ArtSection, GreenSection } from '@/components/site/Sections';
+import { 
+  Trust, 
+  AboutSection, 
+  ExperienceSection, 
+  ServicesSection, 
+  ProcessSection, 
+  ProjectsSection, 
+  EducationSection, 
+  AchievementsSection, 
+  VisualTransition, 
+  ArtSection, 
+  GreenSection 
+} from '@/components/site/Sections';
 import { ContactSection } from '@/components/site/ContactForm';
 import { images } from '@/lib/portfolio';
 import { MobileHome } from '@/components/mobile';
-export const Route = createFileRoute('/')({ head: () => seo({ path: '/', title: 'Anmay Saha | Civil Engineer, Building Planner & Construction Professional in Agartala, Tripura', description: 'Anmay Saha is a Civil Engineer, Building Planner and Construction Professional based in Agartala, Tripura, working across building planning, construction, interior design and project execution.', jsonLd: [personLd, websiteLd] }), component: Home });
-function Home() { return <SiteLayout><MobileHome /><div className="hidden md:block"><section className="relative overflow-hidden bg-cream"><div className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-16 pt-12 md:grid-cols-[1.05fr_1fr] md:gap-3 md:py-20 lg:px-8 lg:py-24"><div className="relative z-10"><p className="eyebrow">Designing spaces. Building dreams.</p><h1 className="mt-5 text-[clamp(2.8rem,5vw,5.7rem)] leading-[1.13] font-medium">I Design.<br />I Plan.<br />I <span className="text-primary">Build</span> with Purpose.</h1><p className="mt-6 max-w-lg text-base leading-8 text-muted-foreground">I'm Anmay Saha, a Civil Engineer, Building Planner & Construction Professional creating sustainable, functional and aesthetic spaces that stand the test of time.</p><div className="mt-9 flex flex-wrap gap-3"><Button asChild className="h-12 rounded-none px-7"><Link to="/projects">Explore My Work <ArrowRight /></Link></Button><Button asChild variant="outline" className="h-12 rounded-none px-7"><Link to="/contact">Contact Me <ArrowUpRight /></Link></Button></div></div><div className="relative min-h-[380px] md:min-h-[540px]"><img src={images.hero} alt="Contemporary residential architecture" fetchPriority="high" className="hero-mask absolute inset-0 h-full w-full object-cover" /><Link to="/green-constructions" className="absolute bottom-4 left-2 bg-forest-deep p-5 text-cream shadow-soft transition hover:bg-primary md:-left-8 md:bottom-8"><span className="script block text-3xl">Anmay Saha</span><span className="mt-2 block text-[11px] font-semibold uppercase">Founder & Proprietor<br />Green Constructions <ArrowUpRight className="inline h-3 w-3" /></span></Link></div></div></section><Trust /><AboutSection /><ExperienceSection /><ServicesSection /><ProcessSection /><ProjectsSection /><EducationSection /><AchievementsSection /><VisualTransition /><ArtSection /><GreenSection /><ContactSection /></div></SiteLayout> }
+
+export const Route = createFileRoute('/')({
+  head: () =>
+    seo({
+      path: '/',
+      title: 'Anmay Saha | Civil Engineer, Building Planner & Construction Professional in Agartala, Tripura',
+      description:
+        'Anmay Saha is a Civil Engineer, Building Planner and Construction Professional based in Agartala, Tripura, working across building planning, construction, interior design and project execution.',
+      jsonLd: [personLd, websiteLd],
+    }),
+  component: Home,
+});
+
+function Home() {
+  return (
+    <SiteLayout>
+      <MobileHome />
+      <div className="hidden md:block">
+        <section className="relative overflow-hidden bg-cream">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-16 pt-12 md:grid-cols-[1.05fr_1fr] md:gap-3 md:py-20 lg:px-8 lg:py-24">
+            <div className="relative z-10">
+              <p className="eyebrow">Designing spaces. Building dreams.</p>
+              <h1 className="mt-5 text-[clamp(2.8rem,5vw,5.7rem)] leading-[1.13] font-medium">
+                I Design.<br />I Plan.<br />I <span className="text-primary">Build</span> with Purpose.
+              </h1>
+              <p className="mt-6 max-w-lg text-base leading-8 text-muted-foreground">
+                I'm Anmay Saha, a Civil Engineer, Building Planner & Construction Professional creating sustainable, functional and aesthetic spaces that stand the test of time.
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Button asChild className="h-12 rounded-none px-7">
+                  <Link to="/projects">
+                    Explore My Work <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="h-12 rounded-none px-7">
+                  <Link to="/contact">
+                    Contact Me <ArrowUpRight />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            
+            <div className="relative min-h-[380px] md:min-h-[540px]">
+              <img
+                src={images.hero}
+                alt="Contemporary residential architecture"
+                fetchPriority="high"
+                className="hero-mask absolute inset-0 h-full w-full object-cover"
+              />
+              <Link
+                to="/green-constructions"
+                className="absolute bottom-4 left-2 bg-forest-deep p-5 text-cream shadow-soft transition hover:bg-primary md:-left-8 md:bottom-8"
+              >
+                <span className="script block text-3xl">Anmay Saha</span>
+                <span className="mt-2 block text-[11px] font-semibold uppercase">
+                  Founder & Proprietor<br />
+                  Green Constructions <ArrowUpRight className="inline h-3 w-3" />
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <Trust />
+        <AboutSection />
+        <ExperienceSection />
+        <ServicesSection />
+        <ProcessSection />
+        <ProjectsSection />
+        <EducationSection />
+        <AchievementsSection />
+        <VisualTransition />
+        <ArtSection />
+        <GreenSection />
+        <ContactSection />
+      </div>
+    </SiteLayout>
+  );
+}
