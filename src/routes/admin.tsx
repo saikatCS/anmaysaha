@@ -42,10 +42,10 @@ function AdminPage() {
 
 const Center = ({ children }: { children: ReactNode }) => <main className="grid min-h-screen place-items-center bg-cream p-5"><div className="text-center">{children}</div></main>;
 
-function Login({ onDone }: { onDone: () => void }) {
+function Login({ onDone }: { onDone: () => Promise<void> }) {
   const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
   const [err, setErr] = useState(''); const [busy, setBusy] = useState(false);
-  const submit = async (e: FormEvent) => { e.preventDefault(); setBusy(true); setErr(''); const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password }); setBusy(false); if (error) setErr('Incorrect email or password.'); else onDone(); };
+  const submit = async (e: FormEvent) => { e.preventDefault(); setBusy(true); setErr(''); const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password }); if (error) { setBusy(false); setErr('Incorrect email or password.'); } else { await onDone(); setBusy(false); } };
   return <main className="grid min-h-screen place-items-center bg-cream p-5"><form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-soft"><p className="eyebrow">Anmay Art</p><h1 className="mt-2 text-3xl">Admin login</h1><label className="mt-6 block text-sm font-semibold">Email<Input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-1.5" /></label><label className="mt-4 block text-sm font-semibold">Password<Input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="mt-1.5" /></label>{err && <p className="mt-3 text-sm text-destructive">{err}</p>}<Button type="submit" disabled={busy} className="mt-6 h-11 w-full">{busy ? <Loader2 className="animate-spin" /> : 'Sign in'}</Button><Link to="/" className="mt-4 block text-center text-sm text-muted-foreground">Back to website</Link></form></main>;
 }
 
