@@ -616,7 +616,7 @@ export function MobileHome() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
-              Hello! 👋
+              Hello! 
             </span>
             <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
               I'm <span className="text-primary">Anmay Saha</span>
