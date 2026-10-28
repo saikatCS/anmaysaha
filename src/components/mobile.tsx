@@ -5,7 +5,7 @@ import {
   ArrowRight, ArrowUpRight, Award, Building2, ChevronLeft, ChevronRight, ClipboardCheck, FileCheck2,
   GraduationCap, HardHat, Home as HomeIcon, Lamp, LayoutGrid, Leaf, MapPin, Menu, MessageSquare,
   Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink, DraftingCompass, Paintbrush, Layers3, Box,
-  Palette, Phone, Mail
+  Palette, Phone, Mail, Building
 } from "lucide-react";
 import { Brand } from "@/components/site/Brand";
 import { contact, credentials, images, journey, services } from "@/lib/portfolio";
@@ -106,14 +106,14 @@ export function MobileHeader() {
   );
 }
 
-/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
+/* 5-button floating bottom bar: Construction (Building icon) | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
   const [popupItem, setPopupItem] = useState<string | null>(null);
 
   const items = [
-    { label: "Construction", Icon: Leaf, to: "/green-constructions", active: is("/green-constructions") },
+    { label: "Construction", Icon: Building, to: "/green-constructions", active: is("/green-constructions") },
     { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false, direct: true },
     { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks"), direct: true },
     { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
@@ -616,7 +616,7 @@ export function MobileHome() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
-              Hello! 
+              Hello! 👋
             </span>
             <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
               I'm <span className="text-primary">Anmay Saha</span>
