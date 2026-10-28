@@ -1,10 +1,11 @@
-// cspell:ignore CRETOVERSE Anmay Saha Chowmohoni Agartala noscroll
-import { Link } from "@tanstack/react-router";
+// cspell:ignore CRETOVERSE Anmay Saha Chowmohoni Agartala noscroll Unnati
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, Award, Building2, ChevronLeft, ChevronRight, ClipboardCheck, FileCheck2,
   GraduationCap, HardHat, Home as HomeIcon, Lamp, LayoutGrid, Leaf, MapPin, Menu, MessageSquare,
-  Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink, DraftingCompass, Paintbrush, Layers3
+  Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink, DraftingCompass, Paintbrush, Layers3, Box,
+  Palette, Phone
 } from "lucide-react";
 import { Brand } from "@/components/site/Brand";
 import { contact, credentials, images, journey, services } from "@/lib/portfolio";
@@ -19,11 +20,20 @@ import card5 from "@/assets/card5.png";
 import card6 from "@/assets/card6.png";
 
 const CRETOVERSE = "https://cretoverse.com";
+// Paste the Unnati Social Organization Facebook page link here:
+const UNNATI_FACEBOOK = "https://www.facebook.com/";
 const menuLinks = [
-  { label: "Home", to: "/" }, { label: "About", to: "/about" }, { label: "Experience", to: "/", hash: "m-experience" },
-  { label: "Services", to: "/", hash: "m-services" }, { label: "Projects", to: "/projects" }, { label: "Education", to: "/", hash: "m-education" },
-  { label: "Artworks", to: "/artworks" }, { label: "Contact", to: "/contact" },
+  { label: "Home", to: "/" }, { label: "Work", to: "/projects" }, { label: "Services", to: "/", hash: "m-services" },
+  { label: "About", to: "/about" }, { label: "Contact", to: "/contact" },
 ] as const;
+
+const roles = [
+  "Civil Engineer",
+  "Building Planner",
+  "Construction Professional",
+  "Founder of Green Constructions",
+  "Founder of Cretoverse"
+];
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
 
@@ -71,31 +81,143 @@ export function MobileHeader() {
   );
 }
 
+/* 6-button floating bottom bar with click popup modal effect */
 export function MobileBottomNav() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
+  const [popupItem, setPopupItem] = useState<string | null>(null);
+
   const items = [
-    { label: "Home", to: "/", Icon: HomeIcon, exact: true },
-    { label: "Projects", to: "/projects", Icon: LayoutGrid },
-    { label: "Services", to: "/", hash: "m-services", Icon: FileText, exact: true, noActive: true },
-    { label: "About", to: "/about", Icon: User },
-    { label: "Contact", to: "/contact", Icon: MessageSquare },
+    { label: "Construction", Icon: Leaf, to: "/green-constructions", active: is("/green-constructions") },
+    { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false },
+    { label: "Home", Icon: HomeIcon, to: "/", active: is("/", true) },
+    { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks") },
+    { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
+    { label: "Contact", Icon: Phone, to: "/contact", active: is("/contact") },
   ] as const;
+
   return (
-    <nav aria-label="Primary" className="m-safe-bottom fixed inset-x-0 bottom-0 z-50 border-t border-forest-deep/10 bg-card/95 backdrop-blur md:hidden">
-      <ul className="grid h-18 grid-cols-5">
-        {items.map((it) => (
-          <li key={it.label}>
-            <Link to={it.to} {...("hash" in it ? { hash: it.hash } : {})}
-              activeOptions={{ exact: "exact" in it, includeHash: "hash" in it }}
-              className="group flex h-full flex-col items-center justify-center gap-1 text-[12px] font-medium text-ink/70 transition-colors data-[status=active]:text-primary"
-              activeProps={"noActive" in it ? {} : { "data-status": "active" } as never}>
-              <it.Icon size={22} strokeWidth={1.7} />
-              <span>{it.label}</span>
-              <span className="h-0.5 w-9 rounded-full bg-transparent transition-colors group-data-[status=active]:bg-primary" />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <>
+      <nav
+        aria-label="Primary"
+        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 rounded-[26px] bg-white shadow-[0_14px_40px_-10px_rgba(60,32,190,0.45)] md:hidden"
+      >
+        <ul className="grid h-[68px] grid-cols-6">
+          {items.map((it) => {
+            const inner = (
+              <>
+                <span
+                  className={`grid h-11 w-11 place-items-center rounded-full transition-all duration-500 ease-out ${
+                    it.active
+                      ? "-translate-y-5 scale-110 bg-white shadow-[0_8px_18px_-6px_rgba(90,40,210,0.55)] ring-[6px] ring-[#faf9fe]"
+                      : "translate-y-0 scale-100 bg-transparent shadow-none ring-0 ring-transparent"
+                  }`}
+                >
+                  <it.Icon
+                    size={22}
+                    strokeWidth={1.8}
+                    className={`transition-colors duration-500 ${it.active ? "text-[#6a2ec0]" : "text-[#4b4b66]"}`}
+                  />
+                </span>
+                <span
+                  className={`-mt-1 text-[10.5px] leading-none transition-all duration-500 ${
+                    it.active ? "-translate-y-1 font-bold text-[#6a2ec0]" : "font-medium text-[#4b4b66]"
+                  }`}
+                >
+                  {it.label}
+                </span>
+              </>
+            );
+            const cls = "flex h-full flex-col items-center justify-center gap-1 focus-visible:outline-2 focus-visible:outline-[#6a2ec0]";
+            return (
+              <li key={it.label}>
+                {"href" in it ? (
+                  <a
+                    href={it.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Unnati on Facebook"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPopupItem(it.label);
+                    }}
+                    className={cls}
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  <Link
+                    to={it.to}
+                    aria-current={it.active ? "page" : undefined}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPopupItem(it.label);
+                    }}
+                    className={cls}
+                  >
+                    {inner}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Popup Dialog when clicking any icon */}
+      {popupItem && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden">
+          <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-[#6a2ec0]/10 text-[#6a2ec0]">
+              <SparklesIcon className="h-7 w-7" />
+            </div>
+            <h3 className="font-serif text-xl font-bold text-ink">Selected: {popupItem}</h3>
+            <p className="mt-2 text-sm text-muted-foreground">You clicked on the {popupItem} navigation icon.</p>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setPopupItem(null)}
+                className="flex-1 rounded-full border border-forest-deep/20 py-2.5 text-sm font-semibold text-forest-deep"
+              >
+                Cancel
+              </button>
+              {(() => {
+                const target = items.find((i) => i.label === popupItem);
+                if (!target) return null;
+                return "href" in target ? (
+                  <a
+                    href={target.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setPopupItem(null)}
+                    className="flex-1 rounded-full bg-[#6a2ec0] py-2.5 text-sm font-semibold text-white shadow-md text-center"
+                  >
+                    Proceed
+                  </a>
+                ) : (
+                  <Link
+                    to={target.to}
+                    onClick={() => setPopupItem(null)}
+                    className="flex-1 rounded-full bg-[#6a2ec0] py-2.5 text-sm font-semibold text-white shadow-md text-center inline-flex items-center justify-center"
+                  >
+                    Proceed
+                  </Link>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      <path d="M5 3v4" /><path d="M19 17v4" /><path d="M3 5h4" /><path d="M17 19h4" />
+    </svg>
   );
 }
 
@@ -186,10 +308,12 @@ const serviceCardsData = [
   { t: "Structural Consultation", desc: "Safe, efficient and practical structural solutions.", Icon: Ruler, img: card5 },
   { t: "Renovation & Remodeling", desc: "Transforming existing spaces into better experiences.", Icon: Layers3, img: card6 },
 ];
-const useFeatured = () => { const projects = useProjects(); return [
-  { key: "the-elite", title: "THE ELITE", category: "Hotel & Restaurant", location: "Orient Chowmohoni, Agartala", image: null as string | null, gc: true },
-  ...projects.map((p) => ({ key: p.slug, title: p.title, category: p.category, location: "remoteId" in p && p.remoteId ? p.location : "Concept project", image: p.image as string | null, gc: false })),
-]; };
+const useFeatured = () => {
+  const projects = useProjects();
+  return projects
+    .filter((p) => Boolean(p.image) && Boolean(p.remoteId) && Boolean(p.location) && !/to be confirmed/i.test(p.location))
+    .map((p) => ({ key: p.slug, title: p.title, category: p.category, location: p.location, image: p.image as string, gc: false }));
+};
 
 function useAutoCarousel(ref: React.RefObject<HTMLDivElement | null>, count: number, delay: number) {
   const [index, setIndex] = useState(0);
@@ -267,6 +391,35 @@ export function MobileHome() {
   const [inView, setInView] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
 
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(90);
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const fullText = roles[currentRoleIndex]!;
+      
+      if (isDeleting) {
+        setCurrentText(fullText.substring(0, currentText.length - 1));
+        setTypingSpeed(45);
+      } else {
+        setCurrentText(fullText.substring(0, currentText.length + 1));
+        setTypingSpeed(85);
+      }
+
+      if (!isDeleting && currentText === fullText) {
+        setTimeout(() => setIsDeleting(true), 1500);
+      } else if (isDeleting && currentText === "") {
+        setIsDeleting(false);
+        setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentRoleIndex, typingSpeed]);
+
   useEffect(() => {
     const el = aboutRef.current;
     if (!el) return;
@@ -282,20 +435,38 @@ export function MobileHome() {
   return (
     <div className="overflow-x-hidden bg-cream md:hidden">
       {/* HERO */}
-      <section className="relative px-5 pt-6 pb-2">
+      <section className="relative px-5 pt-4 pb-2">
         <div className="m-rise">
-          <p className="text-[11px] leading-normal font-semibold tracking-[0.14em] text-primary uppercase">Designing spaces.<br />Building dreams.</p>
-          <h1 className="mt-3 font-serif text-[clamp(2.2rem,11vw,3rem)] leading-[1.08] font-semibold text-ink">
-            I Design.<br />I Plan.<br />I Build<br />with <span className="text-primary">Purpose.</span>
-          </h1>
-          <p className="mt-4 max-w-[36ch] text-[14.5px] leading-[1.65] text-muted-foreground">I'm Anmay Saha, a Civil Engineer, Building Planner & Construction Professional creating thoughtful, functional and aesthetic spaces.</p>
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
+          <div className="mt-2">
+            <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
+              Hello! 
+            </span>
+            <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
+              I'm <span className="text-primary">Anmay Saha</span>
+            </h1>
+          </div>
+
+          {/* Typewriter Role Container */}
+          <div className="mt-2 h-9 flex items-center">
+            <p className="text-base font-semibold text-primary tracking-wide">
+              {currentText}
+              <span className="inline-block w-0.5 h-4 ml-1 bg-primary animate-pulse align-middle" />
+            </p>
+          </div>
+
+          <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
+            Designing thoughtful spaces, planning with precision, and building with purpose.
+          </p>
+
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Link to="/projects" className={`${pill} px-6`}>EXPLORE MY WORK <ArrowRight size={15} /></Link>
-            <Link to="/contact" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-forest-deep/25 px-6 text-[13px] font-bold tracking-[0.08em] text-forest-deep transition active:scale-[0.98]">CONTACT ME</Link>
+            <Link to="/projects" className={`${pill} px-6`}>Explore my work <ArrowRight size={15} /></Link>
+            <Link to="/contact" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-forest-deep/25 px-6 text-[13px] font-bold tracking-[0.08em] text-forest-deep transition active:scale-[0.98]">Contact me <ArrowUpRight size={15} /></Link>
           </div>
         </div>
-        <div className="m-rise relative mt-7" style={{ animationDelay: "140ms" }}>
-          <img src={images.hero} alt="Contemporary residential architecture with landscaping" fetchPriority="high" className="aspect-4/5 w-full rounded-[22px] object-cover object-[60%_center]" />
+
+        <div className="m-rise relative mt-6" style={{ animationDelay: "140ms" }}>
+          <img src={portrait} alt="Anmay Saha" fetchPriority="high" className="aspect-4/5 w-full rounded-[22px] object-cover object-top" />
           <Link to="/green-constructions" className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-forest-deep/95 px-4 py-3 text-cream shadow-soft backdrop-blur">
             <Leaf size={24} className="shrink-0 text-cream/80" />
             <span className="min-w-0 flex-1 leading-tight">
@@ -374,6 +545,22 @@ export function MobileHome() {
         </div>
       </section>
 
+      {/* EXPERIENCE / PROFESSIONAL JOURNEY */}
+      <section id="m-experience" className="mt-12 scroll-mt-20 bg-card px-5 py-12">
+        <Label>Professional journey</Label>
+        <Heading>A Practice<br />Built on Purpose.</Heading>
+        <ol className="relative mt-8 ml-2 border-l-2 border-primary/40">
+          {journey.map((j) => (
+            <li key={j.role + j.organization} className="relative pb-7 pl-6 last:pb-0">
+              <span className="absolute top-1 -left-2.25 h-4 w-4 rounded-full border-4 border-card bg-primary" />
+              <p className="text-[15px] font-semibold text-ink">{j.role}</p>
+              <p className="text-[13px] font-semibold text-primary">{j.organization}</p>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">{j.description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       {/* SERVICES */}
       <section id="m-services" className="scroll-mt-20 px-5 pt-10">
         <SectionHead label="My services" title="What I Do" link={<Link to="/" hash="services" className="flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-forest-deep">View All <ArrowRight size={16} /></Link>} />
@@ -410,8 +597,7 @@ export function MobileHome() {
           {featured.map((p) => {
             const inner = (
               <>
-                {p.image ? <img src={p.image} alt={p.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" /> :
-                  <div className="absolute inset-0 bg-forest-deep m-leaf"><Building2 size={64} strokeWidth={1} className="absolute top-6 right-6 text-cream/25" /><p className="absolute top-14 left-5 max-w-[70%] text-[12px] text-cream/60">Project photography coming soon</p></div>}
+                <img src={p.image} alt={p.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-linear-to-t from-ink/80 via-ink/10 to-transparent" />
                 <span className="absolute top-4 left-4 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground">{p.category}</span>
                 <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 text-cream">
@@ -439,22 +625,6 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* EXPERIENCE */}
-      <section id="m-experience" className="mt-12 scroll-mt-20 bg-card px-5 py-12">
-        <Label>Professional journey</Label>
-        <Heading>A Practice<br />Built on Purpose.</Heading>
-        <ol className="relative mt-8 ml-2 border-l-2 border-primary/40">
-          {journey.map((j) => (
-            <li key={j.role + j.organization} className="relative pb-7 pl-6 last:pb-0">
-              <span className="absolute top-1 -left-2.25 h-4 w-4 rounded-full border-4 border-card bg-primary" />
-              <p className="text-[15px] font-semibold text-ink">{j.role}</p>
-              <p className="text-[13px] font-semibold text-primary">{j.organization}</p>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">{j.description}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       {/* PROCESS */}
       <section className="px-5 py-12">
         <Label>The approach</Label>
@@ -469,18 +639,23 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* EDUCATION */}
-      <section id="m-education" className="scroll-mt-20 bg-card px-5 py-12">
-        <Label>Education &amp; credentials</Label>
-        <Heading>The Foundation<br />Behind Every Space.</Heading>
-        <ul className="mt-7 grid gap-3">
-          {credentials.map((c) => (
-            <li key={c} className="flex items-center gap-3.5 rounded-2xl bg-stone p-4 text-[14.5px] text-ink">
-              <Award size={22} strokeWidth={1.6} className="shrink-0 text-primary" />{c}
-            </li>
-          ))}
-        </ul>
-      </section>
+    
+{/* 
+  EDUCATION SECTION — TEMPORARILY DISABLED
+
+  <section id="m-education" className="scroll-mt-20 bg-card px-5 py-12">
+    <Label>Education &amp; credentials</Label>
+    <Heading>The Foundation<br />Behind Every Space.</Heading>
+    <ul className="mt-7 grid gap-3">
+      {credentials.map((c) => (
+        <li key={c} className="flex items-center gap-3.5 rounded-2xl bg-stone p-4 text-[14.5px] text-ink">
+          <Award size={22} strokeWidth={1.6} className="shrink-0 text-primary" />
+          {c}
+        </li>
+      ))}
+    </ul>
+  </section>
+*/}
 
       {/* ARTWORKS */}
       <section className="py-12">

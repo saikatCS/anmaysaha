@@ -202,6 +202,81 @@ section[id] { scroll-margin-top: 84px; }
 .m-pb { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
 .m-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 .m-leaf { background-image: radial-gradient(circle at 85% 20%, rgba(250,250,247,0.10) 0 60px, transparent 61px), radial-gradient(circle at 100% 100%, rgba(250,250,247,0.07) 0 120px, transparent 121px); }
-.m-service-card { border: 1.5px solid transparent; background: linear-gradient(var(--color-card), var(--color-card)) padding-box, linear-gradient(135deg, var(--color-forest-deep), var(--color-forest), var(--color-gold)) border-box; box-shadow: 0 8px 20px -16px var(--color-forest-deep); }
-.m-credential-circle { border: 3px solid transparent; border-radius: 50%; background: linear-gradient(var(--color-card), var(--color-accent)) padding-box, linear-gradient(140deg, var(--color-forest-deep), var(--color-forest), var(--color-gold), var(--color-forest)) border-box; box-shadow: 0 10px 24px -18px var(--color-forest-deep); }
+.m-service-card { border: 1.5px solid transparent; background: linear-gradient(var(--card, #fff), var(--card, #fff)) padding-box, linear-gradient(135deg, #a036c3, #6a2ec0 50%, #2b2bb0) border-box; box-shadow: 0 8px 20px -16px #1b1363; }
+.m-credential-circle { border: 3px solid transparent; border-radius: 50%; background: linear-gradient(#ffffff, #f2effb) padding-box, linear-gradient(140deg, #a036c3, #6a2ec0 50%, #2b2bb0) border-box; box-shadow: 0 10px 24px -18px #1b1363; }
 @media (prefers-reduced-motion: reduce) { .m-rise, .m-menu { animation: none; } }
+
+/* ==========================================================================
+   Anmay Art theme (scoped)
+   Applied only inside <SiteLayout> via the `.anmay` class, so Green Constructions
+   and /admin keep their own look. Colours are taken from the Anmay Art logo:
+   violet #A036C3 -> purple #6A2EC0 -> royal blue #2B2BB0 -> navy #0B1470.
+   To tweak the brand, edit the variables below.
+   ========================================================================== */
+.anmay {
+  --brand-violet: #a036c3;
+  --brand-purple: #6a2ec0;
+  --brand-indigo: #2b2bb0;
+  --brand-navy: #0b1470;
+  --brand-night: #0f0b2e;
+  --brand-gradient: linear-gradient(135deg, #a036c3 0%, #6a2ec0 48%, #2b2bb0 100%);
+  --brand-gradient-deep: linear-gradient(145deg, #0f0b2e 0%, #1b1363 55%, #2a1a7a 100%);
+
+  --forest: #6a2ec0;
+  --forest-deep: #1b1363;
+  --gold: #a036c3;
+  --ink: #14112b;
+  --cream: #faf9fe;
+  --stone: #f2f0fa;
+
+  --background: #faf9fe;
+  --foreground: #14112b;
+  --card: #ffffff;
+  --card-foreground: #14112b;
+  --popover: #ffffff;
+  --popover-foreground: #14112b;
+  --primary: #6a2ec0;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f0fa;
+  --secondary-foreground: #14112b;
+  --muted: #f2f0fa;
+  --muted-foreground: #5e5979;
+  --accent: #eee9fb;
+  --accent-foreground: #2a1a7a;
+  --border: #e3ddf4;
+  --input: #d9d0f0;
+  --ring: #6a2ec0;
+
+  --anmay-display: "Bricolage Grotesque", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+.anmay h1, .anmay h2, .anmay h3, .anmay .font-serif { font-family: var(--anmay-display); letter-spacing: -0.015em; }
+.anmay h1 { font-weight: 700; }
+.anmay h2, .anmay h3 { font-weight: 600; }
+.anmay .eyebrow { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.02em; text-transform: none; color: var(--brand-purple); }
+.anmay ::selection { background: #d9c6f5; color: #14112b; }
+.anmay :focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 2px; }
+
+/* gradient helpers (used sparingly: main highlights, buttons, dividers) */
+.bg-brand { background: var(--brand-gradient); color: #fff; }
+.bg-brand-deep { background: var(--brand-gradient-deep); color: #fff; }
+.text-brand-light { background: linear-gradient(135deg, #f0b8ff 0%, #b79bff 55%, #8f9bff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; padding-bottom: 0.08em; }
+.bg-brand-light { background: linear-gradient(135deg, #f0b8ff, #8f9bff); }
+.text-brand { background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; padding-bottom: 0.08em; }
+.border-brand { border: 1.5px solid transparent; background: linear-gradient(var(--card), var(--card)) padding-box, var(--brand-gradient) border-box; }
+.rule-brand { height: 3px; width: 56px; border-radius: 99px; background: var(--brand-gradient); }
+.btn-brand { background: var(--brand-gradient); color: #fff; box-shadow: 0 10px 26px -12px rgba(106, 46, 192, 0.7); transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease; }
+.btn-brand:hover { filter: brightness(1.08); box-shadow: 0 14px 30px -12px rgba(106, 46, 192, 0.8); }
+.btn-brand:active { transform: scale(0.98); }
+.btn-brand:disabled { opacity: 0.5; box-shadow: none; }
+.btn-ghost-brand { border: 1.5px solid rgba(106, 46, 192, 0.35); color: var(--brand-purple); background: transparent; transition: background 0.2s ease, border-color 0.2s ease; }
+.btn-ghost-brand:hover { background: rgba(106, 46, 192, 0.07); border-color: var(--brand-purple); }
+
+/* logo-inspired hero shapes: slanted "A" slab, small triangle, ring */
+.shape-slab { clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%); }
+.shape-triangle { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.hero-glow { background: radial-gradient(60% 60% at 80% 10%, rgba(160, 54, 195, 0.14), transparent 70%), radial-gradient(50% 50% at 0% 100%, rgba(43, 43, 176, 0.10), transparent 70%); }
+.grid-lines { background-image: linear-gradient(rgba(106, 46, 192, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(106, 46, 192, 0.07) 1px, transparent 1px); background-size: 36px 36px; }
+.card-lift { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+.card-lift:hover { transform: translateY(-3px); box-shadow: 0 22px 44px -26px rgba(43, 26, 122, 0.5); border-color: rgba(106, 46, 192, 0.35); }
+@media (prefers-reduced-motion: reduce) { .card-lift, .btn-brand { transition: none; } .card-lift:hover { transform: none; } }

@@ -29,11 +29,14 @@ function About() {
       />
       
       <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 md:grid-cols-2 lg:px-8">
-        <img
-          src={portrait}
-          alt="Portrait representing Anmay Saha"
-          className="aspect-4/5 w-full object-cover"
-        />
+        <div className="relative mx-auto w-full max-w-md">
+          <div aria-hidden className="absolute -bottom-5 -left-5 h-full w-full rounded-[28px] bg-brand opacity-90" />
+          <img
+            src={portrait}
+            alt="Portrait of Anmay Saha"
+            className="relative aspect-4/5 w-full rounded-[28px] object-cover object-top shadow-soft"
+          />
+        </div>
         <div>
           <p className="eyebrow">The story</p>
           <h2 className="mt-4 text-3xl md:text-4xl">Engineering with imagination.</h2>

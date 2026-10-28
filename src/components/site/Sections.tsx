@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router';
-import { ArrowRight, ArrowUpRight, Award, DraftingCompass, HardHat, Home, Layers3, Paintbrush, PenTool, Ruler, Sparkles, ArrowRight as ArrowRightIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Reveal } from './Reveal';
+import {
+  ArrowRight, ArrowUpRight, Award, Building2, DraftingCompass, GraduationCap, HardHat, Home, Layers3,
+  Paintbrush, PenTool, Ruler, Sparkles, Users,
+} from 'lucide-react';
 import { images, credentials, journey, services } from '@/lib/portfolio';
+import { greenProjects } from '@/lib/green-constructions';
 import { useArtworks, useProjects, type Artwork, type Project } from '@/lib/remote-content';
 import greenSiteAsset from '@/assets/green-constructions-site.png';
 import portrait from '@/assets/portrait.png';
@@ -13,24 +15,42 @@ import card4 from '@/assets/card4.png';
 import card5 from '@/assets/card5.png';
 import card6 from '@/assets/card6.png';
 
-export const SectionIntro = ({ label, title, description }: { label: string; title: string; description?: string }) => (
-  <div>
+/* Placeholder text such as "Location to be confirmed" is never shown to visitors. */
+const isTbc = (s?: string | null) => !s || /to be confirmed/i.test(s);
+export const projectPlace = (p: { location?: string | null }) => (isTbc(p.location) ? 'Concept project' : (p.location as string));
+export const artMedium = (a: { medium?: string | null }) => (isTbc(a.medium) ? '' : (a.medium as string));
+export const projectYear = (p: { year?: string | null }) => (isTbc(p.year) ? '' : (p.year as string));
+
+export const SectionIntro = ({ label, title, description, center = false }: { label: string; title: string; description?: string; center?: boolean }) => (
+  <div className={center ? 'mx-auto text-center' : ''}>
     <p className="eyebrow">{label}</p>
-    <h2 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold md:text-5xl">{title}</h2>
-    {description && <p className="mt-5 max-w-xl leading-8 text-muted-foreground">{description}</p>}
+    <h2 className={`mt-3 text-3xl leading-[1.1] md:text-[2.75rem] ${center ? 'mx-auto max-w-3xl' : 'max-w-2xl'}`}>{title}</h2>
+    {description && <p className={`mt-5 max-w-xl text-base leading-8 text-muted-foreground ${center ? 'mx-auto' : ''}`}>{description}</p>}
   </div>
 );
 
-const icons = [DraftingCompass, Home, HardHat, Paintbrush, Ruler, Layers3, PenTool, Sparkles];
-const cardImages = [card1, card2, card3, card4, card5, card6];
+const serviceIcons = [DraftingCompass, Home, HardHat, Paintbrush, Ruler, Layers3, PenTool, Sparkles];
+const serviceImages = [card1, card2, card3, card4, card5, card6];
 
+const credentialCards = [
+  { t: 'B.Tech', s: 'Civil Engineering', Icon: GraduationCap },
+  { t: 'M.Tech', s: 'Materials Science', Icon: GraduationCap },
+  { t: 'AMC Approved', s: 'Building Planner', Icon: Building2 },
+  { t: 'Associate Member', s: 'Institution of Engineers (India)', Icon: Users },
+];
+
+/* ---------- Credential strip ---------- */
 export function Trust() {
   return (
-    <section className="border-y border-border bg-card">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-5 py-7 md:grid-cols-4 lg:px-8">
-        {credentials.map((c, i) => (
-          <div key={c} className="flex items-center gap-3 border-l-2 border-primary pl-4 text-xs font-semibold leading-5 md:text-sm">
-            <span className="text-primary">0{i + 1}</span>{c}
+    <section aria-label="Qualifications" className="border-y border-border bg-card">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-8 md:grid-cols-4 lg:px-8">
+        {credentialCards.map(({ t, s, Icon }) => (
+          <div key={t} className="flex items-center gap-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand shadow-[0_10px_22px_-12px_rgba(106,46,192,0.9)]"><Icon size={22} strokeWidth={1.7} /></span>
+            <div className="min-w-0 leading-tight">
+              <p className="font-serif text-base font-semibold">{t}</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{s}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -38,244 +58,151 @@ export function Trust() {
   );
 }
 
+/* ---------- About ---------- */
 export function AboutSection() {
   return (
-    <section id="about" className="py-24 md:py-32">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 md:grid-cols-2 lg:gap-24 lg:px-8">
-        <Reveal className="relative">
-          <div className="absolute -left-4 -top-4 h-full w-full border border-primary/35" />
-          <img src={portrait} alt="Portrait representing Anmay Saha" loading="lazy" className="relative aspect-4/5 w-full object-cover" />
-        </Reveal>
-        <Reveal>
+    <section id="about" className="py-20 md:py-28">
+      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 md:grid-cols-[0.85fr_1.15fr] lg:gap-24 lg:px-8">
+        <div className="relative mx-auto w-full max-w-md">
+          <div aria-hidden className="absolute -bottom-5 -left-5 h-full w-full rounded-[28px] bg-brand opacity-90" />
+          <img src={portrait} alt="Portrait of Anmay Saha" loading="lazy" className="relative aspect-4/5 w-full rounded-[28px] object-cover object-top shadow-soft" />
+        </div>
+        <div>
           <SectionIntro
             label="About me"
-            title="Crafting Spaces with Passion & Precision."
-            description="I'm Anmay Saha — a B.Tech Civil Engineer and M.Tech Engineer in Materials Science, an AMC-approved Building Planner and an Associate Member of the Institution of Engineers (India)."
+            title="Engineer by training. Builder by practice."
+            description="I'm Anmay Saha, a B.Tech Civil Engineer with an M.Tech in Materials Science, an AMC-approved Building Planner and an Associate Member of the Institution of Engineers (India)."
           />
-          <p className="mt-6 leading-8 text-muted-foreground">
-            I run my work under anmayarts.com. As Proprietor of Green Constructions, a professionally managed firm offering comprehensive building planning, construction and interior design services, I bring a strong commitment to quality, structural integrity and sustainable design practices to every space.
+          <p className="mt-6 max-w-xl leading-8 text-muted-foreground">
+            As Proprietor of Green Constructions, I lead a firm that offers building planning, construction and interior design, with a steady focus on quality, structural integrity and sustainable design.
           </p>
-          <p className="script mt-7 text-4xl text-primary">Anmay Saha</p>
-          <Button asChild variant="outline" className="mt-8 h-12 rounded-none px-7">
-            <Link to="/about">
-              Know More About Me <ArrowRight />
-            </Link>
-          </Button>
-        </Reveal>
+          <ul id="education" aria-label="Education and credentials" className="mt-8 grid gap-3 sm:grid-cols-2">
+            {credentials.map((c) => (
+              <li key={c} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 text-sm font-semibold leading-6">
+                <Award size={20} strokeWidth={1.7} className="mt-0.5 shrink-0 text-primary" />{c}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <Link to="/about" className="btn-brand inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold">Read my story <ArrowRight size={16} /></Link>
+            <Link to="/green-constructions" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary">Green Constructions <ArrowUpRight size={16} /></Link>
+            <a href="https://cretoverse.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary">Cretoverse <ArrowUpRight size={16} /></a>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
+/* ---------- Journey (used on the About page) ---------- */
 export function ExperienceSection() {
   return (
-    <section id="experience" className="relative overflow-hidden bg-[#f7f6f1] pt-12 pb-16 md:pt-16 md:pb-20">
-      {/* Light green and deep green subtle fine grid checkpoint lines background */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.12]" 
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #2c352b 1px, transparent 1px),
-            linear-gradient(to bottom, #4f6f48 1px, transparent 1px)
-          `,
-          backgroundSize: '32px 32px'
-        }}
-      />
+    <section id="experience" className="relative overflow-hidden bg-stone py-20 md:py-24">
+      <div aria-hidden className="grid-lines absolute inset-0 opacity-70 [mask-image:radial-gradient(70%_70%_at_50%_30%,black,transparent)]" />
       <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
-        <Reveal>
-          <div className="mx-auto mb-12 max-w-3xl text-center">
-            <div className="mb-3 inline-flex items-center gap-3">
-              <span className="h-px w-10 bg-stone-500" />
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">Professional journey</span>
-              <span className="h-px w-10 bg-stone-500" />
-            </div>
-            <h2 className="font-serif text-4xl leading-tight text-stone-900 md:text-6xl">
-              A practice built on <span className="text-primary">purpose</span>.
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-              Engineering, construction and creativity shape the way I approach each project.
-            </p>
-          </div>
-        </Reveal>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {journey.map((item, i) => (
-            <Reveal key={item.organization}>
-              <div className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] border border-stone-200/70 bg-white p-6 shadow-[0_10px_30px_rgba(64,67,52,0.08)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_18px_38px_rgba(64,67,52,0.14)]">
-                <div>
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                      0{i + 1}
-                    </span>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">PRESENT</span>
-                  </div>
-                  <h3 className="font-serif text-lg leading-tight text-stone-900 group-hover:text-primary transition-colors">{item.role}</h3>
-                  <p className="mt-1.5 text-xs font-semibold text-primary">{item.organization}</p>
-                  <p className="mt-3 text-xs leading-relaxed text-stone-500 sm:text-sm">{item.description}</p>
-                </div>
-              </div>
-            </Reveal>
+        <SectionIntro center label="Professional journey" title="A practice built on purpose." description="Engineering, construction and creativity shape the way I approach each project." />
+        <ol className="mt-14 grid gap-5 md:grid-cols-3">
+          {journey.map((item) => (
+            <li key={item.organization} className="card-lift relative flex flex-col rounded-3xl border border-border bg-card p-7">
+              <span aria-hidden className="absolute inset-x-7 top-0 h-1 rounded-b-full bg-brand" />
+              <h3 className="font-serif text-lg leading-snug">{item.role}</h3>
+              <p className="mt-2 text-sm font-semibold text-primary">{item.organization}</p>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.description}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );
 }
 
+/* ---------- Services ---------- */
 export function ServicesSection() {
+  const extra = services.slice(6);
   return (
-    <section id="services" className="relative bg-[#f7f6f1] pt-4 pb-16 md:pt-6 md:pb-20 overflow-hidden">
-      {/* Light green and deep green subtle fine grid checkpoint lines background */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.12]" 
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #2c352b 1px, transparent 1px),
-            linear-gradient(to bottom, #4f6f48 1px, transparent 1px)
-          `,
-          backgroundSize: '32px 32px'
-        }}
-      />
-      <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
-        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
-          <div className="mb-3 inline-flex items-center gap-3">
-            <span className="h-px w-10 bg-stone-500" />
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">WHAT I DO</span>
-            <span className="h-px w-10 bg-stone-500" />
-          </div>
-          <h2 className="font-serif text-4xl leading-tight text-stone-900 md:text-6xl">
-            Services That I <span className="text-primary">Offer</span>
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-            From concept to completion, I provide end-to-end solutions for better living spaces.
-          </p>
-        </div>
-
-        <div className="grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <section id="services" className="bg-stone py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <SectionIntro center label="What I do" title="From first sketch to final handover." description="End-to-end planning, design and construction support for homes and commercial spaces." />
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {services.slice(0, 6).map((s, i) => {
-            const Icon = icons[i];
-            const cardImg = cardImages[i];
-            const numStr = `0${i + 1}`;
-            const accent = i % 2 === 0 ? 'bg-primary' : 'bg-[#b6a16d]';
+            const Icon = serviceIcons[i] ?? DraftingCompass;
             return (
-              <Reveal key={s.title}>
-                <Link
-                  to="/"
-                  hash="contact"
-                  className="group relative flex h-full min-h-50 max-h-55 overflow-hidden rounded-[24px] border border-stone-200/70 bg-white shadow-[0_10px_30px_rgba(64,67,52,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_18px_38px_rgba(64,67,52,0.14)]"
-                >
-                  <div className="relative z-10 flex w-[59%] flex-col justify-between p-4 pr-1 sm:p-5 sm:pr-1">
-                    <div>
-                      <div className="mb-2 flex items-center gap-2">
-                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${accent} text-white shadow-sm`}>
-                        {Icon && <Icon size={16} strokeWidth={1.75} />}
-                        </div>
-                        <span className="text-xs font-medium tracking-widest text-stone-400">{numStr}</span>
-                        <span className="h-px w-5 bg-stone-300" />
-                      </div>
-
-                      <h3 className="font-serif text-base leading-tight text-stone-900 transition-colors group-hover:text-primary sm:text-lg">{s.title}</h3>
-                      <p className="mt-1.5 max-w-47.5 text-[11px] leading-relaxed text-stone-500 sm:text-xs">{s.description}</p>
-                    </div>
-
-                    <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-stone-900">
-                      <span>Know More</span>
-                      <div className={`flex h-5 w-5 items-center justify-center rounded-full ${accent} text-white transition-transform duration-300 group-hover:translate-x-1`}>
-                        <ArrowRightIcon size={10} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-y-0 right-0 w-[47%] overflow-hidden rounded-l-[50%] bg-stone-100 rounded-[52%_0_0_52%/50%_0_0_50%]">
-                    <img src={cardImg} alt={s.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-black/10 via-transparent to-transparent" />
-                  </div>
-                </Link>
-              </Reveal>
+              <Link key={s.title} to="/" hash="contact" className="card-lift group flex min-h-52 flex-col justify-between rounded-3xl border border-border bg-card p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand"><Icon size={22} strokeWidth={1.7} /></span>
+                  <img src={serviceImages[i]} alt="" loading="lazy" className="h-24 w-24 rounded-2xl object-cover" />
+                </div>
+                <div className="mt-6">
+                  <h3 className="font-serif text-xl leading-snug">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.description}</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-primary">Discuss this service <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" /></span>
+                </div>
+              </Link>
             );
           })}
         </div>
+        {extra.length > 0 && (
+          <p className="mt-8 text-center text-sm leading-7 text-muted-foreground">
+            Also available: {extra.map((s) => s.title).join(' and ')}.
+          </p>
+        )}
       </div>
     </section>
   );
 }
 
+/* ---------- Process (a true sequence, so numbered) ---------- */
 export function ProcessSection() {
   const steps = [
-    ['01', 'Discover', 'Understand requirements, vision and project needs.'],
-    ['02', 'Plan', 'Develop layouts, concepts and technical planning.'],
-    ['03', 'Design', 'Refine functionality, aesthetics and details.'],
-    ['04', 'Build', 'Coordinate execution, quality and construction.'],
-    ['05', 'Deliver', 'Complete the project with attention to detail.'],
+    ['Discover', 'Understand requirements, vision and project needs.'],
+    ['Plan', 'Develop layouts, concepts and technical planning.'],
+    ['Design', 'Refine functionality, aesthetics and details.'],
+    ['Build', 'Coordinate execution, quality and construction.'],
+    ['Deliver', 'Complete the project with attention to detail.'],
   ];
-
   return (
-    <section className="relative overflow-hidden bg-[#233522] py-24 text-stone-100">
-      {/* Decorative luxury gradient background effects matching the reference image */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(53,73,50,0.8),transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(30,45,28,0.9),transparent_70%)] pointer-events-none" />
-      
+    <section className="relative overflow-hidden bg-brand-deep py-20 text-white md:py-28">
+      <div aria-hidden className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[#a036c3]/25 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-[#2b2bb0]/40 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
-        <div className="mb-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#d4af37]">The Approach</p>
-          <h2 className="mt-3 font-serif text-4xl md:text-6xl text-stone-100 tracking-tight font-normal">
-            From Concept to <span className="italic font-serif text-[#d4af37]">Completion</span>.
-          </h2>
-          <p className="mt-4 max-w-xl text-sm md:text-base leading-relaxed text-stone-300/90 font-light">
-            A structured and thoughtful process that turns ideas into meaningful, well-crafted spaces.
-          </p>
-        </div>
-
-        {/* Horizontal Connecting Timeline Line */}
-        <div className="relative hidden lg:block mb-12">
-          <div className="absolute top-1/2 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#d4af37]/40 to-transparent -translate-y-1/2" />
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-5 lg:gap-6">
-          {steps.map(([n, t, d], index) => (
-            <Reveal key={n} className="relative flex flex-col">
-              {/* Subtle top arched card container styled like the design reference */}
-              <div className="group relative flex flex-col justify-between rounded-t-[120px] border border-white/10 bg-white/3 backdrop-blur-md p-6 pt-10 text-center transition-all duration-500 hover:border-[#d4af37]/40 hover:bg-white/6 hover:-translate-y-1 h-full min-h-80">
-                
-                {/* Node marker on top of card */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center justify-center">
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#d4af37] shadow-[0_0_10px_#d4af37]" />
-                  <div className="absolute h-5 w-5 rounded-full border border-[#d4af37]/30 animate-ping opacity-30" />
-                </div>
-
-                <div>
-                  <span className="font-serif text-3xl md:text-4xl text-[#d4af37] font-light block">{n}</span>
-                  <div className="mx-auto my-3 h-px w-8 bg-[#d4af37]/40" />
-                  <h3 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-stone-200">{t}</h3>
-                  <p className="mt-4 text-xs md:text-sm leading-relaxed text-stone-300/80 font-light">{d}</p>
-                </div>
-              </div>
-            </Reveal>
+        <p className="text-sm font-bold text-[#d9a6ee]">How I work</p>
+        <h2 className="mt-3 max-w-2xl text-3xl leading-[1.1] md:text-[2.75rem]">From concept to completion.</h2>
+        <p className="mt-5 max-w-xl leading-8 text-white/70">A structured process that turns ideas into well-crafted, lasting spaces.</p>
+        <ol className="mt-14 grid gap-8 md:grid-cols-5 md:gap-5">
+          {steps.map(([t, d], i) => (
+            <li key={t} className="relative md:pt-10">
+              <span aria-hidden className="absolute left-0 top-0 hidden h-px w-full bg-white/20 md:block" />
+              <span aria-hidden className="absolute left-0 top-[-5px] hidden h-[11px] w-[11px] rounded-full bg-brand-light ring-4 ring-[#1b1363] md:block" />
+              <span className="font-serif text-3xl font-semibold text-brand-light">{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="mt-3 font-sans text-base font-bold">{t}</h3>
+              <p className="mt-2 text-sm leading-7 text-white/70">{d}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );
 }
 
-export function ProjectGrid({ items: given }: { items?: Project[] }) {
+/* ---------- Projects ---------- */
+export function ProjectGrid({ items: given, limit }: { items?: Project[]; limit?: number }) {
   const all = useProjects();
-  const items = given ?? all;
-
+  const list = given ?? all;
+  const items = limit ? list.slice(0, limit) : list;
   return (
-    <div className="grid gap-7 md:grid-cols-2">
-      {items.map((p, i) => (
+    <div className="grid gap-8 md:grid-cols-2">
+      {items.map((p) => (
         <Link to="/projects/$slug" params={{ slug: p.slug }} key={p.slug} className="group block min-w-0">
-          <div className={`overflow-hidden bg-stone ${i % 3 === 0 ? 'aspect-5/4' : 'aspect-5/4'}`}>
+          <div className="relative aspect-4/3 overflow-hidden rounded-3xl bg-stone shadow-soft">
             <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+            <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm">{p.category}</span>
           </div>
-          <div className="mt-5 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase text-primary">{p.category}</p>
-              <h3 className="mt-2 text-2xl">{p.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{p.location}</p>
+          <div className="mt-5 flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h3 className="text-2xl leading-tight">{p.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{projectPlace(p)}</p>
             </div>
-            <ArrowUpRight className="shrink-0 text-primary" />
+            <span className="btn-ghost-brand grid h-11 w-11 shrink-0 place-items-center rounded-full transition group-hover:bg-brand group-hover:text-white"><ArrowUpRight size={19} /></span>
           </div>
         </Link>
       ))}
@@ -285,35 +212,32 @@ export function ProjectGrid({ items: given }: { items?: Project[] }) {
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="bg-stone py-24">
+    <section id="projects" className="py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-          <SectionIntro label="Selected work" title="Some of My Recent Work" />
-          <Button asChild variant="outline" className="rounded-none">
-            <Link to="/projects">
-              View All Projects <ArrowRight />
-            </Link>
-          </Button>
+          <SectionIntro label="Selected work" title="Some of my recent work." />
+          <Link to="/projects" className="btn-ghost-brand inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold">View all projects <ArrowRight size={16} /></Link>
         </div>
-        <ProjectGrid />
+        <ProjectGrid limit={4} />
       </div>
     </section>
   );
 }
 
+/* ---------- Education (used on the About page) ---------- */
 export function EducationSection() {
   return (
-    <section id="education" className="py-24">
+    <section id="education" className="py-20 md:py-24">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[1fr_1.15fr] lg:px-8">
-        <SectionIntro label="Education & credentials" title="The Foundation Behind Every Space I Create." />
-        <div className="border-t border-border">
-          {credentials.map((c, i) => (
-            <div key={c} className="flex gap-6 border-b border-border py-6">
-              <span className="font-serif text-2xl text-primary">0{i + 1}</span>
+        <SectionIntro label="Education & credentials" title="The foundation behind every space I create." />
+        <ul className="border-t border-border">
+          {credentials.map((c) => (
+            <li key={c} className="flex items-center gap-5 border-b border-border py-6">
+              <Award className="shrink-0 text-primary" size={26} strokeWidth={1.5} />
               <h3 className="font-sans text-base font-semibold">{c}</h3>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
@@ -323,16 +247,12 @@ export function AchievementsSection() {
   return (
     <section id="achievements" className="overflow-hidden bg-stone py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <SectionIntro
-          label="Recognition & milestones"
-          title="A continuing journey."
-          description="Professional qualifications and milestones that inform the work."
-        />
+        <SectionIntro label="Recognition & milestones" title="A continuing journey." description="Professional qualifications and milestones that inform the work." />
       </div>
       <div className="achievement-window mt-12" aria-label="Qualifications gallery">
         <div className="achievement-track gap-5 px-5">
           {[...credentials, ...credentials].map((c, i) => (
-            <div key={i} className="flex h-48 w-72 shrink-0 flex-col justify-between border border-border bg-card p-6 md:w-80">
+            <div key={i} className="flex h-48 w-72 shrink-0 flex-col justify-between rounded-3xl border border-border bg-card p-6 md:w-80">
               <Award className="text-primary" size={28} strokeWidth={1.5} />
               <p className="font-serif text-xl leading-snug">{c}</p>
             </div>
@@ -345,18 +265,13 @@ export function AchievementsSection() {
 
 export function VisualTransition() {
   return (
-    <section className="bg-cream py-24">
+    <section className="bg-background py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <SectionIntro label="A visual perspective" title="Spaces, materials & moments." />
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[images.hero, images.interior, images.apartment, images.commercial].map((img, i) => (
-            <div key={img} className="aspect-4/5 overflow-hidden bg-stone">
-              <img
-                src={img}
-                alt={['Modern architecture', 'Interior detail', 'Residential architecture', 'Commercial architecture'][i]}
-                loading="lazy"
-                className="h-full w-full object-cover transition duration-700 hover:scale-105"
-              />
+            <div key={img} className="aspect-4/5 overflow-hidden rounded-2xl bg-stone">
+              <img src={img} alt={['Modern architecture', 'Interior detail', 'Residential architecture', 'Commercial architecture'][i]} loading="lazy" className="h-full w-full object-cover transition duration-700 hover:scale-105" />
             </div>
           ))}
         </div>
@@ -365,23 +280,23 @@ export function VisualTransition() {
   );
 }
 
+/* ---------- Artworks ---------- */
 export function ArtGrid({ items: given }: { items?: Artwork[] }) {
   const all = useArtworks();
   const items = given ?? all;
-
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((a, i) => (
-        <Link
-          key={a.slug}
-          to="/artworks/$slug"
-          params={{ slug: a.slug }}
-          className={`group relative block overflow-hidden bg-stone ${i === 1 ? 'sm:mt-12' : ''}`}
-        >
-          <img src={a.image} alt={a.title} loading="lazy" className="aspect-3/4 w-full object-cover transition duration-700 group-hover:scale-105" />
-          <div className="absolute inset-x-0 bottom-0 bg-ink/75 p-5 text-cream opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
-            <h3 className="text-xl">{a.title}</h3>
-            <p className="text-xs">{a.medium}</p>
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((a) => (
+        <Link key={a.slug} to="/artworks/$slug" params={{ slug: a.slug }} className="group block">
+          <div className="overflow-hidden rounded-3xl bg-stone shadow-soft">
+            <img src={a.image} alt={a.title} loading="lazy" className="aspect-4/5 w-full object-cover transition duration-700 group-hover:scale-105" />
+          </div>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="text-xl leading-tight">{a.title}</h3>
+              {artMedium(a) && <p className="mt-1 text-sm text-muted-foreground">{artMedium(a)}</p>}
+            </div>
+            <ArrowUpRight className="shrink-0 text-primary" size={20} />
           </div>
         </Link>
       ))}
@@ -391,15 +306,11 @@ export function ArtGrid({ items: given }: { items?: Artwork[] }) {
 
 export function ArtSection() {
   return (
-    <section id="artworks" className="py-24">
+    <section id="artworks" className="bg-stone py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-          <SectionIntro label="Beyond engineering" title="Where Engineering Meets Creative Expression." />
-          <Button asChild variant="outline" className="rounded-none">
-            <Link to="/artworks">
-              Explore My Artworks <ArrowRight />
-            </Link>
-          </Button>
+          <SectionIntro label="Beyond engineering" title="Where engineering meets creative expression." />
+          <Link to="/artworks" className="btn-ghost-brand inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold">Explore my artworks <ArrowRight size={16} /></Link>
         </div>
         <ArtGrid />
       </div>
@@ -407,22 +318,31 @@ export function ArtSection() {
   );
 }
 
+/* ---------- Green Constructions teaser ---------- */
 export function GreenSection() {
+  const built = greenProjects.slice(0, 2);
   return (
-    <section className="relative overflow-hidden bg-forest-deep py-20 text-cream">
-      <img src={greenSiteAsset} alt="Construction site led by Green Constructions" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-forest-deep/70" />
-      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 md:flex-row md:items-center lg:px-8">
+    <section className="relative isolate overflow-hidden py-20 text-white md:py-24">
+      <img src={greenSiteAsset} alt="" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-r from-[#0f0b2e]/95 via-[#1b1363]/90 to-[#2b2bb0]/75" />
+      <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div>
-          <p className="text-xs font-bold uppercase text-gold">Green Constructions</p>
-          <h2 className="mt-4 max-w-xl text-3xl md:text-5xl [text-shadow:0_2px_12px_rgba(26,26,26,0.45)]">Built with intention. Led with care.</h2>
-          <p className="mt-5 text-sm text-cream/85 [text-shadow:0_1px_8px_rgba(26,26,26,0.45)]">Founder & Proprietor — Anmay Saha</p>
-        </div>
-        <Button asChild className="h-12 shrink-0 bg-cream px-7 text-forest-deep hover:bg-stone">
-          <Link to="/green-constructions">
-            Explore Green Constructions <ArrowRight />
+          <p className="text-sm font-bold text-[#d9a6ee]">Green Constructions</p>
+          <h2 className="mt-4 max-w-xl text-3xl leading-[1.1] md:text-5xl">Built with intention. Led with care.</h2>
+          <p className="mt-5 text-sm text-white/80">Founder &amp; Proprietor: Anmay Saha</p>
+          <Link to="/green-constructions" className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-bold text-[#1b1363] transition hover:bg-[#f2f0fa]">
+            Explore Green Constructions <ArrowRight size={16} />
           </Link>
-        </Button>
+        </div>
+        <ul className="grid gap-3" aria-label="Built projects">
+          {built.map((p) => (
+            <li key={p.slug} className="rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md">
+              <p className="font-serif text-lg font-semibold">{p.title}</p>
+              <p className="mt-1 text-sm text-white/80">{p.category}</p>
+              <p className="mt-1 text-sm text-white/65">{p.location}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
