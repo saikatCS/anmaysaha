@@ -106,7 +106,7 @@ export function MobileHeader() {
   );
 }
 
-/* 5-button floating bottom bar: Construction | Unnati | Artworks | Life | Contact with instant popup modal */
+/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
@@ -114,8 +114,8 @@ export function MobileBottomNav() {
 
   const items = [
     { label: "Construction", Icon: Leaf, to: "/green-constructions", active: is("/green-constructions") },
-    { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false },
-    { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks") },
+    { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false, direct: true },
+    { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks"), direct: true },
     { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
     { label: "Contact", Icon: Phone, to: "/contact", active: is("/contact") },
   ] as const;
@@ -162,8 +162,10 @@ export function MobileBottomNav() {
                     rel="noopener noreferrer"
                     aria-label="Unnati on Facebook"
                     onClick={(e) => {
-                      e.preventDefault();
-                      setPopupItem(it.label);
+                      if (!it.direct) {
+                        e.preventDefault();
+                        setPopupItem(it.label);
+                      }
                     }}
                     className={cls}
                   >
@@ -174,8 +176,10 @@ export function MobileBottomNav() {
                     to={it.to}
                     aria-current={it.active ? "page" : undefined}
                     onClick={(e) => {
-                      e.preventDefault();
-                      setPopupItem(it.label);
+                      if (!('direct' in it && it.direct)) {
+                        e.preventDefault();
+                        setPopupItem(it.label);
+                      }
                     }}
                     className={cls}
                   >
@@ -188,7 +192,7 @@ export function MobileBottomNav() {
         </ul>
       </nav>
 
-      {/* Popup Dialog when clicking any navigation icon */}
+      {/* Popup Dialog when clicking non-direct navigation icons */}
       {popupItem && (
         <div role="dialog" aria-modal="true" className="fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
           <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in zoom-in-95 duration-150">
@@ -412,10 +416,12 @@ function Heading({ children, light, className = "" }: { children: ReactNode; lig
 }
 function SectionHead({ label, title, link }: { label: string; title: ReactNode; link?: ReactNode }) {
   return (
-    <div className="text-center">
-      <Label>{label}</Label>
-      <Heading className="text-[1.8rem]">{title}</Heading>
-      {link && <div className="mt-3 flex justify-center">{link}</div>}
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 px-5">
+      <div className="min-w-0 text-left">
+        <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-primary">{label}</p>
+        <h2 className="mt-2 font-serif text-[1.8rem] leading-[1.2] font-semibold text-ink">{title}</h2>
+      </div>
+      {link && <div className="shrink-0">{link}</div>}
     </div>
   );
 }
@@ -550,7 +556,7 @@ export function MobileHome() {
   const projI = useAutoCarousel(projRef, featured.length, 3800);
   const artI = useAutoCarousel(artRef, artworks.length, 3400);
 
-  // Intersection observer for Process / How I work cards animation
+  // Intersection observer for Process / How I work cards animation with bidirectional trigger (supports scrolling down AND scrolling up)
   const processRef = useRef<HTMLDivElement>(null);
   const [processInView, setProcessInView] = useState(false);
 
@@ -587,10 +593,9 @@ export function MobileHome() {
     const el = processRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting) {
-        setProcessInView(true);
-      }
-    }, { threshold: 0.15 });
+      // Toggle state based on visibility so it animates whether scrolling down or up
+      setProcessInView(entry?.isIntersecting ?? false);
+    }, { threshold: 0.2 });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
@@ -730,13 +735,15 @@ export function MobileHome() {
         </ol>
       </section>
 
-      {/* WHAT I DO (Left-aligned text layout with Medium Headings) */}
-      <section id="m-services" className="scroll-mt-20 px-5 pt-10 text-left">
-        <div className="text-left">
-          <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-primary">My services</p>
-          <h2 className="mt-2 font-serif text-[1.8rem] leading-[1.2] font-semibold text-ink">What I Do</h2>
-          <div className="mt-2 flex justify-start">
-            <Link to="/" hash="services" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-forest-deep">View All <ArrowRight size={16} /></Link>
+      {/* WHAT I DO (Centered Title, View All on right) */}
+      <section id="m-services" className="scroll-mt-20 pt-10">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 px-5">
+          <div className="min-w-0 text-center col-span-2">
+            <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-primary">My services</p>
+            <h2 className="mt-2 font-serif text-[1.8rem] leading-[1.2] font-semibold text-ink">What I Do</h2>
+            <div className="mt-2 flex justify-end">
+              <Link to="/" hash="services" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-forest-deep">View All <ArrowRight size={16} /></Link>
+            </div>
           </div>
         </div>
         <div ref={serviceRef} aria-label="Services, swipe to explore" className="m-noscroll -mx-5 mt-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 py-1">
@@ -765,9 +772,17 @@ export function MobileHome() {
         <Dots count={serviceCardsData.length} active={serviceI} />
       </section>
 
-      {/* FEATURED PROJECTS */}
-      <section className="pt-10 text-center">
-        <div className="px-5"><SectionHead label="Featured projects" title="Some of My Recent Work" link={<Link to="/projects" className="inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-forest-deep justify-center">View All <ArrowRight size={16} /></Link>} /></div>
+      {/* FEATURED PROJECTS (Centered Title, View All on right) */}
+      <section className="pt-10">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 px-5">
+          <div className="min-w-0 text-center col-span-2">
+            <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-primary">Featured projects</p>
+            <h2 className="mt-2 font-serif text-[1.8rem] leading-[1.2] font-semibold text-ink">Some of My Recent Work</h2>
+            <div className="mt-2 flex justify-end">
+              <Link to="/projects" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-forest-deep">View All <ArrowRight size={16} /></Link>
+            </div>
+          </div>
+        </div>
         <div ref={projRef} aria-label="Featured projects, swipe to explore" className="m-noscroll mt-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5">
           {featured.map((p) => {
             const inner = (
@@ -802,7 +817,7 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* HOW I WORK / PROCESS (Left/Right Scroll Animation & Medium Heading) */}
+      {/* HOW I WORK / PROCESS (Bidirectional sliding animation supporting scroll down & scroll up) */}
       <section ref={processRef} className="px-5 py-12 text-center overflow-hidden">
         <Label>How I work</Label>
         <Heading>From Concept<br />to Completion.</Heading>
@@ -818,7 +833,7 @@ export function MobileHome() {
             return (
               <div
                 key={t}
-                style={{ transitionDelay: `${i * 150}ms` }}
+                style={{ transitionDelay: `${i * 180}ms` }}
                 className={`flex items-center gap-4 rounded-2xl border border-forest-deep/12 bg-card p-4 text-left transition-all duration-700 ease-out transform ${animClass}`}
               >
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-deep text-sm font-bold text-cream">0{i + 1}</span>
@@ -847,11 +862,11 @@ export function MobileHome() {
         <div className="px-5 flex justify-center"><Link to="/artworks" className={`${pill} mt-6`}>EXPLORE MY ARTWORKS <ArrowRight size={15} /></Link></div>
       </section>
 
-      {/* GREEN CONSTRUCTIONS */}
-      <section className="relative isolate min-h-130 overflow-hidden">
+      {/* GREEN CONSTRUCTIONS (Shifted slightly upward via negative margin) */}
+      <section className="relative isolate min-h-130 overflow-hidden -mt-4">
         <img src={siteAsset} alt="Engineer reviewing plans on a construction site" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover object-[30%_center]" />
         <div className="absolute inset-0 -z-10 bg-linear-to-t from-forest-deep via-forest-deep/75 to-forest-deep/30" />
-        <div className="flex min-h-130 flex-col justify-end px-5 pt-16 pb-10 text-cream text-center">
+        <div className="flex min-h-130 flex-col justify-end px-5 pt-12 pb-10 text-cream text-center">
           <p className="text-[12px] font-bold tracking-[0.24em] text-cream/80">GREEN CONSTRUCTIONS</p>
           <h2 className="mt-3 font-serif text-[2.2rem] leading-[1.1]">Built with intention.<br />Led with care.</h2>
           <p className="mt-4 text-[13px] text-cream/75">Founder &amp; Proprietor</p>
