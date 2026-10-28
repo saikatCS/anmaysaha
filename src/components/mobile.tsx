@@ -20,11 +20,16 @@ import card5 from "@/assets/card5.png";
 import card6 from "@/assets/card6.png";
 
 const CRETOVERSE = "https://cretoverse.com";
-// Paste the Unnati Social Organization Facebook page link here:
 const UNNATI_FACEBOOK = "https://www.facebook.com/";
+
 const menuLinks = [
-  { label: "Home", to: "/" }, { label: "Work", to: "/projects" }, { label: "Services", to: "/", hash: "m-services" },
-  { label: "About", to: "/about" }, { label: "Contact", to: "/contact" },
+  { label: "Home", to: "/" },
+  { label: "About", to: "/about" },
+  { label: "Artwork", to: "/artworks" },
+  { label: "Unnati", href: UNNATI_FACEBOOK },
+  { label: "Work", to: "/projects" },
+  { label: "Services", to: "/", hash: "m-services" },
+  { label: "Contact", to: "/contact" },
 ] as const;
 
 const roles = [
@@ -64,11 +69,19 @@ export function MobileHeader() {
           </div>
           <nav aria-label="Mobile menu" className="mt-6 grid">
             {menuLinks.map((l, i) => (
-              <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} onClick={() => setOpen(false)}
-                className="m-rise flex items-baseline gap-4 border-b border-forest-deep/10 py-3.5 font-serif text-[2rem] leading-tight text-ink"
-                style={{ animationDelay: `${120 + i * 40}ms` }}>
-                <span className="font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}
-              </Link>
+              "href" in l ? (
+                <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}
+                  className="m-rise flex items-baseline gap-4 border-b border-forest-deep/10 py-3.5 font-serif text-[2rem] leading-tight text-ink"
+                  style={{ animationDelay: `${120 + i * 40}ms` }}>
+                  <span className="font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}
+                </a>
+              ) : (
+                <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} onClick={() => setOpen(false)}
+                  className="m-rise flex items-baseline gap-4 border-b border-forest-deep/10 py-3.5 font-serif text-[2rem] leading-tight text-ink"
+                  style={{ animationDelay: `${120 + i * 40}ms` }}>
+                  <span className="font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}
+                </Link>
+              )
             ))}
           </nav>
           <div className="mt-8 grid gap-3">
@@ -81,143 +94,63 @@ export function MobileHeader() {
   );
 }
 
-/* 6-button floating bottom bar with click popup modal effect */
+/* 5-button floating bottom bar: Construction | Unnati | Artworks | Life | Contact (Home removed as requested) */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
-  const [popupItem, setPopupItem] = useState<string | null>(null);
 
   const items = [
     { label: "Construction", Icon: Leaf, to: "/green-constructions", active: is("/green-constructions") },
     { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false },
-    { label: "Home", Icon: HomeIcon, to: "/", active: is("/", true) },
     { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks") },
     { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
     { label: "Contact", Icon: Phone, to: "/contact", active: is("/contact") },
   ] as const;
 
   return (
-    <>
-      <nav
-        aria-label="Primary"
-        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 rounded-[26px] bg-white shadow-[0_14px_40px_-10px_rgba(60,32,190,0.45)] md:hidden"
-      >
-        <ul className="grid h-[68px] grid-cols-6">
-          {items.map((it) => {
-            const inner = (
-              <>
-                <span
-                  className={`grid h-11 w-11 place-items-center rounded-full transition-all duration-500 ease-out ${
-                    it.active
-                      ? "-translate-y-5 scale-110 bg-white shadow-[0_8px_18px_-6px_rgba(90,40,210,0.55)] ring-[6px] ring-[#faf9fe]"
-                      : "translate-y-0 scale-100 bg-transparent shadow-none ring-0 ring-transparent"
-                  }`}
-                >
-                  <it.Icon
-                    size={22}
-                    strokeWidth={1.8}
-                    className={`transition-colors duration-500 ${it.active ? "text-[#6a2ec0]" : "text-[#4b4b66]"}`}
-                  />
-                </span>
-                <span
-                  className={`-mt-1 text-[10.5px] leading-none transition-all duration-500 ${
-                    it.active ? "-translate-y-1 font-bold text-[#6a2ec0]" : "font-medium text-[#4b4b66]"
-                  }`}
-                >
-                  {it.label}
-                </span>
-              </>
-            );
-            const cls = "flex h-full flex-col items-center justify-center gap-1 focus-visible:outline-2 focus-visible:outline-[#6a2ec0]";
-            return (
-              <li key={it.label}>
-                {"href" in it ? (
-                  <a
-                    href={it.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Unnati on Facebook"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPopupItem(it.label);
-                    }}
-                    className={cls}
-                  >
-                    {inner}
-                  </a>
-                ) : (
-                  <Link
-                    to={it.to}
-                    aria-current={it.active ? "page" : undefined}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPopupItem(it.label);
-                    }}
-                    className={cls}
-                  >
-                    {inner}
-                  </Link>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      {/* Popup Dialog when clicking any icon */}
-      {popupItem && (
-        <div role="dialog" aria-modal="true" className="fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden">
-          <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-[#6a2ec0]/10 text-[#6a2ec0]">
-              <SparklesIcon className="h-7 w-7" />
-            </div>
-            <h3 className="font-serif text-xl font-bold text-ink">Selected: {popupItem}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">You clicked on the {popupItem} navigation icon.</p>
-            <div className="mt-6 flex gap-3">
-              <button
-                type="button"
-                onClick={() => setPopupItem(null)}
-                className="flex-1 rounded-full border border-forest-deep/20 py-2.5 text-sm font-semibold text-forest-deep"
+    <nav
+      aria-label="Primary"
+      className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 rounded-[26px] bg-white shadow-[0_14px_40px_-10px_rgba(60,32,190,0.45)] md:hidden"
+    >
+      <ul className="grid h-[68px] grid-cols-5">
+        {items.map((it) => {
+          const inner = (
+            <>
+              <span
+                className={`grid h-11 w-11 place-items-center rounded-full transition-all duration-500 ease-out ${
+                  it.active
+                    ? "-translate-y-5 scale-110 bg-white shadow-[0_8px_18px_-6px_rgba(90,40,210,0.55)] ring-[6px] ring-[#faf9fe]"
+                    : "translate-y-0 scale-100 bg-transparent shadow-none ring-0 ring-transparent"
+                }`}
               >
-                Cancel
-              </button>
-              {(() => {
-                const target = items.find((i) => i.label === popupItem);
-                if (!target) return null;
-                return "href" in target ? (
-                  <a
-                    href={target.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setPopupItem(null)}
-                    className="flex-1 rounded-full bg-[#6a2ec0] py-2.5 text-sm font-semibold text-white shadow-md text-center"
-                  >
-                    Proceed
-                  </a>
-                ) : (
-                  <Link
-                    to={target.to}
-                    onClick={() => setPopupItem(null)}
-                    className="flex-1 rounded-full bg-[#6a2ec0] py-2.5 text-sm font-semibold text-white shadow-md text-center inline-flex items-center justify-center"
-                  >
-                    Proceed
-                  </Link>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-      <path d="M5 3v4" /><path d="M19 17v4" /><path d="M3 5h4" /><path d="M17 19h4" />
-    </svg>
+                <it.Icon
+                  size={22}
+                  strokeWidth={1.8}
+                  className={`transition-colors duration-500 ${it.active ? "text-[#6a2ec0]" : "text-[#4b4b66]"}`}
+                />
+              </span>
+              <span
+                className={`-mt-1 text-[10.5px] leading-none transition-all duration-500 ${
+                  it.active ? "-translate-y-1 font-bold text-[#6a2ec0]" : "font-medium text-[#4b4b66]"
+                }`}
+              >
+                {it.label}
+              </span>
+            </>
+          );
+          const cls = "flex h-full flex-col items-center justify-center gap-1 focus-visible:outline-2 focus-visible:outline-[#6a2ec0]";
+          return (
+            <li key={it.label}>
+              {"href" in it ? (
+                <a href={it.href} target="_blank" rel="noopener noreferrer" aria-label="Unnati on Facebook" className={cls}>{inner}</a>
+              ) : (
+                <Link to={it.to} aria-current={it.active ? "page" : undefined} className={cls}>{inner}</Link>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }
 
@@ -228,7 +161,11 @@ export function MobileFooter() {
       <p className="mt-5 max-w-xs text-sm leading-7 text-cream/60">Designing, planning and building spaces that balance purpose and expression.</p>
       <nav aria-label="Footer" className="mt-8 grid grid-cols-2 gap-x-4">
         {menuLinks.map((l) => (
-          <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</Link>
+          "href" in l ? (
+            <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</a>
+          ) : (
+            <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</Link>
+          )
         ))}
       </nav>
       <div className="mt-6 grid gap-2 border-t border-cream/10 pt-6">
@@ -440,7 +377,7 @@ export function MobileHome() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
-              Hello! 
+              Hello! 👋
             </span>
             <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
               I'm <span className="text-primary">Anmay Saha</span>
@@ -545,7 +482,7 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* EXPERIENCE / PROFESSIONAL JOURNEY */}
+      {/* EXPERIENCE / PROFESSIONAL JOURNEY (Placed right after About section as requested) */}
       <section id="m-experience" className="mt-12 scroll-mt-20 bg-card px-5 py-12">
         <Label>Professional journey</Label>
         <Heading>A Practice<br />Built on Purpose.</Heading>
@@ -638,24 +575,6 @@ export function MobileHome() {
           ))}
         </div>
       </section>
-
-    
-{/* 
-  EDUCATION SECTION — TEMPORARILY DISABLED
-
-  <section id="m-education" className="scroll-mt-20 bg-card px-5 py-12">
-    <Label>Education &amp; credentials</Label>
-    <Heading>The Foundation<br />Behind Every Space.</Heading>
-    <ul className="mt-7 grid gap-3">
-      {credentials.map((c) => (
-        <li key={c} className="flex items-center gap-3.5 rounded-2xl bg-stone p-4 text-[14.5px] text-ink">
-          <Award size={22} strokeWidth={1.6} className="shrink-0 text-primary" />
-          {c}
-        </li>
-      ))}
-    </ul>
-  </section>
-*/}
 
       {/* ARTWORKS */}
       <section className="py-12">
