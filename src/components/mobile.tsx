@@ -20,13 +20,12 @@ import card5 from "@/assets/card5.png";
 import card6 from "@/assets/card6.png";
 
 const CRETOVERSE = "https://cretoverse.com";
-const UNNATI_FACEBOOK = "https://www.facebook.com/";
-
+const UNNATI_FACEBOOK = "https://www.facebook.com/unnati.organization/";
 // Social Links
-const INSTAGRAM_LINK = "https://www.instagram.com/";
-const FACEBOOK_LINK = "https://www.facebook.com/";
-const YOUTUBE_LINK = "https://www.youtube.com/";
-const LINKEDIN_LINK = "https://www.linkedin.com/";
+const INSTAGRAM_LINK = "https://www.instagram.com/anmayarts/";
+const FACEBOOK_LINK = "https://www.facebook.com/anmay.saha/";
+const YOUTUBE_LINK = "https://www.youtube.com/@anmayart";
+const LINKEDIN_LINK = "https://www.linkedin.com/in/anmay-saha-390b491a5 ";
 
 // Contact Info
 const EMAIL_ADDRESS = "anmaysaha@gmail.com";
@@ -49,7 +48,8 @@ const roles = [
   "Building Planner",
   "Construction Professional",
   "Founder of Green Constructions",
-  "Founder of Cretoverse"
+  "Founder of Cretoverse",
+  "Visual Artist"
 ];
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
@@ -616,7 +616,7 @@ export function MobileHome() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
-              Hello! 👋
+              Hello! 
             </span>
             <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
               I'm <span className="text-primary">Anmay Saha</span>
