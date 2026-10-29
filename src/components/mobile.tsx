@@ -5,7 +5,7 @@ import {
   ArrowRight, ArrowUpRight, Award, Building2, ChevronLeft, ChevronRight, ClipboardCheck, FileCheck2,
   GraduationCap, HardHat, Home as HomeIcon, Lamp, LayoutGrid, Leaf, MapPin, Menu, MessageSquare,
   Ruler, Search, User, Users, Wrench, X, FileText, ExternalLink, DraftingCompass, Paintbrush, Layers3, Box,
-  Palette, Phone, Mail, Building
+  Palette, Phone, Mail
 } from "lucide-react";
 import { Brand } from "@/components/site/Brand";
 import { contact, credentials, images, journey, services } from "@/lib/portfolio";
@@ -20,12 +20,14 @@ import card5 from "@/assets/card5.png";
 import card6 from "@/assets/card6.png";
 
 const CRETOVERSE = "https://cretoverse.com";
-const UNNATI_FACEBOOK = "https://www.facebook.com/unnati.organization/";
+const UNNATI_FACEBOOK = "https://www.facebook.com/";
+const WEB_INNOVEX = "https://webinnovex360.online";
+
 // Social Links
-const INSTAGRAM_LINK = "https://www.instagram.com/anmayarts/";
-const FACEBOOK_LINK = "https://www.facebook.com/anmay.saha/";
-const YOUTUBE_LINK = "https://www.youtube.com/@anmayart";
-const LINKEDIN_LINK = "https://www.linkedin.com/in/anmay-saha-390b491a5 ";
+const INSTAGRAM_LINK = "https://www.instagram.com/anmayart.com";
+const FACEBOOK_LINK = "https://www.facebook.com/";
+const YOUTUBE_LINK = "https://www.youtube.com/";
+const LINKEDIN_LINK = "https://www.linkedin.com/";
 
 // Contact Info
 const EMAIL_ADDRESS = "anmaysaha@gmail.com";
@@ -48,8 +50,7 @@ const roles = [
   "Building Planner",
   "Construction Professional",
   "Founder of Green Constructions",
-  "Founder of Cretoverse",
-  "Visual Artist"
+  "Founder of Cretoverse"
 ];
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
@@ -106,14 +107,14 @@ export function MobileHeader() {
   );
 }
 
-/* 5-button floating bottom bar: Construction (Building icon) | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
+/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
   const [popupItem, setPopupItem] = useState<string | null>(null);
 
   const items = [
-    { label: "Construction", Icon: Building, to: "/green-constructions", active: is("/green-constructions") },
+    { label: "Construction", Icon: Leaf, to: "/green-constructions", active: is("/green-constructions") },
     { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false, direct: true },
     { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks"), direct: true },
     { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
@@ -333,7 +334,17 @@ export function MobileFooter() {
           <a href={CRETOVERSE} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-between text-sm font-bold tracking-[0.14em]">CRETOVERSE <ExternalLink size={16} /></a>
         </div>
         <p className="mt-6 flex items-center gap-2 text-xs text-cream/50"><MapPin size={14} /> {contact.location}</p>
-        <p className="mt-2 text-xs text-cream/40">© {new Date().getFullYear()} Anmay Art. All rights reserved.</p>
+        
+        {/* Centralized Copyright and Developed & Managed lines */}
+        <div className="mt-6 pt-6 border-t border-cream/10 text-center flex flex-col items-center justify-center gap-1.5">
+          <p className="text-xs text-cream/40">© 2026 Anmay Art. All rights reserved.</p>
+          <p className="text-xs text-cream/60">
+            Develop &amp; Manged by{" "}
+            <a href={WEB_INNOVEX} target="_blank" rel="noopener noreferrer" className="font-bold text-cream hover:underline inline-flex items-center gap-1">
+              webinnovex360 <ExternalLink size={12} />
+            </a>
+          </p>
+        </div>
       </footer>
 
       {/* Call Confirmation Popup Modal */}
@@ -901,9 +912,9 @@ function MobileContact() {
         <form onSubmit={submit} className="mt-6 grid gap-3 text-left">
           <label className="sr-only" htmlFor="m-name">Full Name</label><input id="m-name" required placeholder="Full Name" className={field} />
           <label className="sr-only" htmlFor="m-phone">Phone Number</label><input id="m-phone" type="tel" placeholder="Phone Number" className={field} />
-          <label className="sr-only" htmlFor="m-email">Email Address</label><input id="m-email" type="email" placeholder="Email Address" className={field} />
+          <label className="rv-sr-only" htmlFor="m-email">Email Address</label><input id="m-email" type="email" placeholder="Email Address" className={field} />
           <label className="sr-only" htmlFor="m-service">Select Service</label>
-          <select id="m-service" defaultValue="" className={field}><option value="" disabled>Select Service</option>{services.map((s) => <option key={s.title}>{s.title}</option>)}</select>
+          <select id="m-service" defaultValue="" className={field}><option value="" disabled>Select Service</option>{services.map((s) => <option key={s.title}>{s.title}</option>)}<option>Other</option></select>
           <label className="sr-only" htmlFor="m-msg">Message</label><textarea id="m-msg" rows={4} placeholder="Message" className={`${field} h-auto py-3`} />
           <button type="submit" className={`${pill} mt-1 justify-center w-full`}>SEND MESSAGE <ArrowRight size={15} /></button>
           <p className="text-[12px] text-muted-foreground text-center">Online enquiries are not yet connected — nothing is sent from this form.</p>
