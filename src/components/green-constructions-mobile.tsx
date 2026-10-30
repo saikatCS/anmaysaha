@@ -1,7 +1,7 @@
 // cspell:ignore CRETOVERSE Anmay Saha Chowmohoni Agartala noscroll Unnati
 import { useEffect, useRef, useState, type FormEvent, type TouchEvent } from 'react';
 import { Link } from '@tanstack/react-router';
-import { ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Building2, Check, ChevronLeft, ChevronRight, Copy, DraftingCompass, HardHat, Home, Layers3, Leaf, MapPin, Menu, PenTool, Ruler, Share2, X, Phone, Mail, Award, Sparkles, ExternalLink } from 'lucide-react';
+import { ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Building2, Check, ChevronLeft, ChevronRight, Copy, DraftingCompass, HardHat, Home, Layers3, Leaf, MapPin, Menu, PenTool, Ruler, Share2, X, Phone, Mail, Award, Sparkles, ExternalLink, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type GreenProject } from '@/lib/green-constructions';
 import { useGreenProjects } from '@/lib/remote-content';
@@ -431,16 +431,18 @@ export function GreenConstructionsMobile() {
         </div>
       </section>
 
-      {/* CTA SECTION */}
-      <section className="relative overflow-hidden rounded-[36px] mx-5 my-10 p-9 text-center text-white shadow-2xl">
-        <img src={siteAsset} alt="Construction site visual supplied for Green Constructions" loading="lazy" className="absolute inset-0 w-full h-full object-cover -z-10 brightness-50"/>
+      {/* BUILT AROUND YOUR VISION SECTION (Updated with website theme matching green background style) */}
+      <section className="relative overflow-hidden rounded-[36px] mx-5 my-10 p-9 text-center text-white shadow-2xl bg-[#25381e] border border-emerald-500/30">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 max-w-lg mx-auto">
-          <Label>{content.cta.label}</Label>
-          <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-snug">
-            {content.cta.titleLines[0]}<br/><em className="not-italic font-serif">{content.cta.titleLines[1]}</em><br/>
-            {content.cta.emphasisLines[0]}<br/><em className="not-italic font-serif">{content.cta.emphasisLines[1]}</em>
+          <Label><span className="text-emerald-400">BUILT AROUND YOUR VISION</span></Label>
+          <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-4 leading-snug">
+            BUILT WITH INTENTION.<br/>
+            <em className="text-[#86efac] not-italic font-serif">DELIVERED WITH CARE.</em>
           </h3>
-          <p className="text-base text-white/95 mb-8 leading-relaxed">{content.cta.description}</p>
+          <p className="text-sm md:text-base text-white/90 mb-8 leading-relaxed font-light">
+            Clear communication, thoughtful planning and careful execution are at the heart of every project.
+          </p>
           <Button onClick={()=>goTo('contact')} className="bg-white text-ink hover:bg-stone-100 rounded-full px-9 py-4 text-sm font-bold shadow-xl">START A PROJECT <ArrowRight size={18}/></Button>
         </div>
       </section>
@@ -535,7 +537,13 @@ export function GreenConstructionsMobile() {
     )}
 
     {/* BOTTOM NAV BAR */}
-    <nav className="gcm-bottom" aria-label="Green Constructions quick navigation">{nav.map(([title,id,Icon])=><Button variant="ghost" key={id} className={active===id?'gcm-active':''} onClick={()=>goTo(id)} aria-label={`Go to ${title.toLowerCase()}`}><Icon size={21} strokeWidth={active===id?2:1.8}/><span>{title}</span></Button>)}</nav>
+    <nav className="gcm-bottom" aria-label="Green Constructions quick navigation">
+      <Button variant="ghost" className={active==='home'?'gcm-active':''} onClick={()=>goTo('home')} aria-label="Go to home"><Home size={21} strokeWidth={active==='home'?2:1.8}/><span>HOME</span></Button>
+      <Button variant="ghost" className={active==='projects'?'gcm-active':''} onClick={()=>goTo('projects')} aria-label="Go to projects"><Building size={21} strokeWidth={active==='projects'?2:1.8}/><span>PROJECTS</span></Button>
+      <Button variant="ghost" className={active==='services'?'gcm-active':''} onClick={()=>goTo('services')} aria-label="Go to services"><Layers3 size={21} strokeWidth={active==='services'?2:1.8}/><span>SERVICES</span></Button>
+      <Button variant="ghost" className={active==='process'?'gcm-active':''} onClick={()=>goTo('process')} aria-label="Go to process"><DraftingCompass size={21} strokeWidth={active==='process'?2:1.8}/><span>PROCESS</span></Button>
+      <Button variant="ghost" className={active==='contact'?'gcm-active':''} onClick={()=>goTo('contact')} aria-label="Go to contact"><ArrowUpRight size={21} strokeWidth={active==='contact'?2:1.8}/><span>CONTACT</span></Button>
+    </nav>
     
     {/* NAVIGATION MENU OVERLAY WITH SMOOTH ANIMATED UPWARD LAYOUT AND HAMBURGER CALL/EMAIL BUTTONS */}
     {menuOpen && (
