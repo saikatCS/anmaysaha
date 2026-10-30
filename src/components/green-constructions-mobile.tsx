@@ -149,7 +149,17 @@ export function GreenConstructionsMobile() {
       }}
     />
 
-    <header className="gcm-header"><a href="#gcm-home" className="gcm-brand" aria-label="Green Constructions home" onClick={e=>{e.preventDefault();goTo('home');}}><img className="gcm-logo" src={logo} alt="Green Constructions Logo" /><span>GREEN<br/>CONSTRUCTIONS</span></a><Button variant="ghost" size="icon" className="gcm-icon" aria-label="Open navigation" aria-expanded={menuOpen} onClick={()=>setMenuOpen(true)}><Menu size={25}/></Button></header>
+    {/* Increased Navbar Header Height and Larger 3-Line Hamburger Menu Icon */}
+    <header className="gcm-header h-20 px-6 flex items-center justify-between border-b border-forest-deep/10 bg-cream/95 backdrop-blur">
+      <a href="#gcm-home" className="gcm-brand flex items-center gap-2.5" aria-label="Green Constructions home" onClick={e=>{e.preventDefault();goTo('home');}}>
+        <img className="gcm-logo h-10 w-10 object-contain" src={logo} alt="Green Constructions Logo" />
+        <span className="font-serif font-bold text-sm leading-tight">GREEN<br/>CONSTRUCTIONS</span>
+      </a>
+      <Button variant="ghost" size="icon" className="gcm-icon h-12 w-12 rounded-full bg-forest-deep/5 hover:bg-forest-deep/10" aria-label="Open navigation" aria-expanded={menuOpen} onClick={()=>setMenuOpen(true)}>
+        <Menu size={30} strokeWidth={2.2}/>
+      </Button>
+    </header>
+
     <main>
       {/* HERO SECTION MATCHING REFERENCE DESIGN */}
       <section className="gcm-hero relative text-center pt-8 pb-12 px-5 overflow-hidden flex flex-col justify-center items-center min-h-[85vh]" aria-labelledby="gcm-title">
@@ -386,15 +396,15 @@ export function GreenConstructionsMobile() {
         </div>
       </section>
 
-      {/* FOUNDER SECTION */}
+      {/* FOUNDER SECTION - Er. Anmay Saha forced into ONE LINE */}
       <section className="px-5 py-12 text-center" id="gcm-founder">
         <div className="max-w-sm mx-auto rounded-[32px] overflow-hidden shadow-2xl mb-6 border-4 border-white">
           <img src={portrait} alt="Portrait of Er. Anmay Saha" loading="lazy" className="w-full aspect-4/5 object-cover object-top"/>
         </div>
         <div className="px-0">
           <Label>{content.founder.label}</Label>
-          <h3 className="text-center text-3xl md:text-4xl font-serif font-bold text-ink leading-snug">
-            {content.founder.titleLines[0]}<br/><em className="text-primary not-italic font-serif">{content.founder.titleLines[1]}</em>
+          <h3 className="text-center text-2xl md:text-3xl font-serif font-bold text-ink leading-snug whitespace-nowrap">
+            Founder &amp; Proprietor:<br/><em className="text-primary not-italic font-serif">Er. Anmay Saha</em>
           </h3>
           <p className="font-semibold text-primary mt-3 text-base">{content.founder.role}<br/><span className="text-xs text-muted-foreground">{content.brand}</span></p>
           <div className="flex flex-wrap justify-center gap-2.5 my-5">
@@ -431,7 +441,7 @@ export function GreenConstructionsMobile() {
         </div>
       </section>
 
-      {/* BUILT AROUND YOUR VISION SECTION (Updated with website theme matching green background style) */}
+      {/* BUILT AROUND YOUR VISION SECTION */}
       <section className="relative overflow-hidden rounded-[36px] mx-5 my-10 p-9 text-center text-white shadow-2xl bg-[#25381e] border border-emerald-500/30">
         <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="relative z-10 max-w-lg mx-auto">
