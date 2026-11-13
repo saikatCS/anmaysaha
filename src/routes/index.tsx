@@ -32,10 +32,13 @@ export const Route = createFileRoute('/')({
 
 const roles = [
   "Civil Engineer",
-  "Building Planner",
-  "Construction Professional",
-  "Founder of Green Constructions",
-  "Founder of Cretoverse"
+  "Material Science Engineer",
+  "Artist",
+  "Interior Designer",
+  "Writer",
+  "Social Activist",
+  "Proprietor of Green Constructions",
+  "Proprietor of Cretoverse"
 ];
 
 function Home() {
