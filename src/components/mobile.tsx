@@ -22,6 +22,7 @@ import card6 from "@/assets/card6.png";
 const CRETOVERSE = "https://cretoverse.com";
 const UNNATI_FACEBOOK = "https://www.facebook.com/";
 const WEB_INNOVEX = "https://webinnovex360.online";
+const LOGO_VIDEO = "/animatedlogo.mp4"; // file lives in the /public folder
 
 // Social Links
 const INSTAGRAM_LINK = "https://www.instagram.com/anmayart.com";
@@ -58,8 +59,95 @@ const roles = [
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
 
+/* Loads Montserrat and applies it to everything inside any element with the .font-montserrat class
+   (the signature, .font-script, keeps its own script font) */
+function FontStyle() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+      .font-montserrat, .font-montserrat *:not(.font-script) { font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif !important; }
+    `}</style>
+  );
+}
+
+/* Animated logo (public/animatedlogo.mp4) - plays ONCE per page load.
+   - starts automatically when the website is opened / refreshed
+   - plays the whole animation, then pauses on its final frame (the finished logo) and never replays
+   - re-renders, scrolling and route changes cannot restart it: the "already played" flag lives in module
+     memory (it resets only on a full refresh / new visit), and the video has no loop / autoplay attribute
+   - the box has a fixed size, so nothing shifts while the video loads or plays
+   - if the video cannot play (blocked, missing, stalled) the static Brand logo is shown instead
+   - with "reduce motion" enabled the video is not played, it just shows the final frame */
+let logoVideoPlayed = false;
+
+function LogoVideo({ onDone }: { onDone: () => void }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const readyRef = useRef(false);
+  const resting = useRef(false); // true = show the final frame without playing
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const markReady = () => { readyRef.current = true; setReady(true); };
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true; // required so phones allow autoplay
+    v.loop = false;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (logoVideoPlayed || reduceMotion) {
+      // do not replay: jump to the last frame and stay there
+      resting.current = true;
+      const rest = () => { v.currentTime = Math.max(0, (v.duration || 0) - 0.05); };
+      if (v.readyState >= 1) rest();
+      else v.addEventListener("loadedmetadata", rest, { once: true });
+      onDone();
+      const restSafety = window.setTimeout(() => { if (!readyRef.current) setFailed(true); }, 4000);
+      return () => { v.removeEventListener("loadedmetadata", rest); window.clearTimeout(restSafety); };
+    }
+
+    v.play().catch(() => { setFailed(true); onDone(); }); // autoplay blocked -> static logo
+    // safety net: if the video stalls, show the static logo and still reveal the rest of the nav bar
+    const safety = window.setTimeout(() => {
+      if (!readyRef.current) setFailed(true);
+      onDone();
+    }, 9000);
+    return () => window.clearTimeout(safety);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="relative h-13 w-13 shrink-0">
+      {/* static logo: only used when the video cannot play */}
+      {failed && (
+        <div className="absolute inset-0 [&>*>*:not(:first-child)]:hidden [&_svg~*]:hidden [&_img~*]:hidden [&_svg]:h-13 [&_svg]:w-13 [&_img]:h-13 [&_img]:w-13">
+          <Brand compact />
+        </div>
+      )}
+      <video
+        ref={ref}
+        src={LOGO_VIDEO}
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        tabIndex={-1}
+        disablePictureInPicture
+        onPlaying={() => { if (!resting.current) markReady(); }}
+        onSeeked={() => { if (resting.current) markReady(); }}
+        onEnded={(e) => { logoVideoPlayed = true; e.currentTarget.pause(); onDone(); }}
+        onError={() => { setFailed(true); onDone(); }}
+        className={`absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-opacity duration-200 ${ready && !failed ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
+  );
+}
+
 export function MobileHeader() {
   const [open, setOpen] = useState(false);
+  const [skipIntro] = useState(logoVideoPlayed); // header re-mounted after the intro already played
+  const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -68,6 +156,7 @@ export function MobileHeader() {
   }, [open]);
   return (
     <>
+      <FontStyle />
       {/* Animations for the new nav bar (kept local so no other file needs to change) */}
       <style>{`
         @keyframes navLineGrow {
@@ -84,50 +173,48 @@ export function MobileHeader() {
           100% { opacity: 1; transform: translateY(0); }
         }
         .nav-logo-in  { animation: navLogoIn 600ms ease-out both; }
-        /* line starts at the bottom of the nav bar and grows upward */
-        @keyframes navLineGlow {
-          0%, 100% { box-shadow: 0 0 4px 0 rgba(106,46,192,.45), 0 0 10px 1px rgba(106,46,192,.25); }
-          50%      { box-shadow: 0 0 8px 1px rgba(106,46,192,.9), 0 0 20px 4px rgba(106,46,192,.5); }
-        }
-        .nav-line     {
-          transform-origin: bottom center;
-          animation: navLineGrow 900ms cubic-bezier(.22,1,.36,1) 200ms both, navLineGlow 2.4s ease-in-out 1.1s infinite;
-        }
-        /* text appears after the line finishes, then stays */
-        .nav-title-1  { animation: navTextIn 600ms ease-out 900ms both; }
-        .nav-title-2  { animation: navTextIn 600ms ease-out 1100ms both; }
+        /* hidden until the logo video has finished playing */
+        .nav-line     { transform-origin: bottom center; transform: scaleY(0); opacity: 0; }
+        .nav-title-1, .nav-title-2 { opacity: 0; }
+        /* then the line grows from the bottom of the bar to the top, and the text appears and stays */
+        .nav-on .nav-line    { animation: navLineGrow 900ms cubic-bezier(.22,1,.36,1) both; }
+        .nav-on .nav-title-1 { animation: navTextIn 600ms ease-out 700ms both; }
+        .nav-on .nav-title-2 { animation: navTextIn 600ms ease-out 900ms both; }
+        /* header re-mounted later (page change): show the final state without replaying */
+        .nav-static .nav-line { transform: none; opacity: 1; }
+        .nav-static .nav-title-1, .nav-static .nav-title-2 { opacity: 1; }
+        .nav-static .nav-logo-in { animation: none; }
         @media (prefers-reduced-motion: reduce) {
-          .nav-logo-in, .nav-line, .nav-title-1, .nav-title-2 { animation: none; }
+          .nav-logo-in, .nav-on .nav-line, .nav-on .nav-title-1, .nav-on .nav-title-2 { animation: none; }
+          .nav-line { transform: none; opacity: 1; }
+          .nav-title-1, .nav-title-2 { opacity: 1; }
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-forest-deep/10 bg-cream/95 backdrop-blur md:hidden">
-        <div className="flex h-24 items-center gap-3 px-4">
-          {/* Bigger logo mark only (Brand's own "ANMAY ART / Design · Plan · Build" text is hidden), "AnmayArt" below it */}
+      <header className="font-montserrat sticky top-0 z-50 border-b border-forest-deep/10 bg-cream/95 backdrop-blur md:hidden">
+        <div className={`flex h-20 items-center gap-3 px-4 ${skipIntro ? "nav-static" : introDone ? "nav-on" : ""}`}>
+          {/* Animated logo video (plays once, then pauses on its last frame), "AnmayArt" below it */}
           <Link to="/" aria-label="Anmay Art home" className="nav-logo-in flex shrink-0 flex-col items-center justify-center gap-1 leading-none">
-            <div className="[&>*>*:not(:first-child)]:hidden [&_svg~*]:hidden [&_img~*]:hidden [&_svg]:h-14 [&_svg]:w-14 [&_img]:h-14 [&_img]:w-14">
-              <Brand compact />
-            </div>
+            <LogoVideo onDone={() => setIntroDone(true)} />
             <span className="text-[13px] font-bold tracking-tight text-primary">AnmayArt</span>
           </Link>
 
-          {/* Glowing animated vertical line: grows from the bottom of the nav bar to the top */}
-          <span aria-hidden className="nav-line block h-18 w-0.5 shrink-0 rounded-full bg-primary" />
+          {/* Thin vertical line: after the logo video ends it grows from the bottom of the bar to the top */}
+          <span aria-hidden className="nav-line block h-16 w-px shrink-0 bg-primary" />
 
-          {/* Static text that stays after the animation */}
+          {/* Text appears after the line and then stays */}
           <div className="min-w-0 flex-1 leading-tight">
             <p className="nav-title-1 whitespace-nowrap text-[18px] font-bold text-ink">Visual Art</p>
             <p className="nav-title-2 mt-0.5 whitespace-nowrap text-[12px] text-muted-foreground">Design &amp; Construction</p>
           </div>
 
           <div className="flex shrink-0 items-center">
-            <Link to="/projects" aria-label="Browse projects" className="grid h-11 w-11 place-items-center rounded-full text-primary focus-visible:outline-2 focus-visible:outline-primary"><Search size={22} strokeWidth={1.8} /></Link>
-            <button type="button" aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(true)} className="grid h-11 w-11 place-items-center rounded-full text-primary focus-visible:outline-2 focus-visible:outline-primary"><Menu size={24} strokeWidth={1.8} /></button>
+            <button type="button" aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(true)} className="grid h-12 w-12 place-items-center rounded-full text-primary focus-visible:outline-2 focus-visible:outline-primary"><Menu size={30} strokeWidth={2.2} /></button>
           </div>
         </div>
       </header>
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Menu" className="m-menu fixed inset-0 z-70 flex flex-col overflow-y-auto bg-cream px-5 pb-10 md:hidden">
+        <div role="dialog" aria-modal="true" aria-label="Menu" className="font-montserrat m-menu fixed inset-0 z-70 flex flex-col overflow-y-auto bg-cream px-5 pb-10 md:hidden">
           <div className="flex h-17 shrink-0 items-center justify-between">
             <Brand compact />
             <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className="grid h-11 w-11 place-items-center rounded-full border border-forest-deep/15 text-forest-deep"><X size={22} /></button>
@@ -159,7 +246,7 @@ export function MobileHeader() {
   );
 }
 
-/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Life | Contact with popup for others */
+/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Cretoverse (direct) | Contact with popup for others */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
@@ -169,15 +256,16 @@ export function MobileBottomNav() {
     { label: "Construction", Icon: Building, to: "/green-constructions", active: is("/green-constructions") },
     { label: "Unnati", Icon: Users, href: UNNATI_FACEBOOK, active: false, direct: true },
     { label: "Artworks", Icon: Palette, to: "/artworks", active: is("/artworks"), direct: true },
-    { label: "Life", Icon: FileText, to: "/about", active: is("/about") },
+    { label: "Cretoverse", Icon: Sparkles, href: CRETOVERSE, active: false, direct: true },
     { label: "Contact", Icon: Phone, to: "/contact", active: is("/contact") },
   ] as const;
 
   return (
     <>
+      <FontStyle />
       <nav
         aria-label="Primary"
-        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 rounded-[26px] bg-white shadow-[0_14px_40px_-10px_rgba(60,32,190,0.45)] md:hidden"
+        className="font-montserrat fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 rounded-[26px] bg-white shadow-[0_14px_40px_-10px_rgba(60,32,190,0.45)] md:hidden"
       >
         <ul className="grid h-[68px] grid-cols-5">
           {items.map((it) => {
@@ -213,7 +301,7 @@ export function MobileBottomNav() {
                     href={it.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Unnati on Facebook"
+                    aria-label={it.label === "Unnati" ? "Unnati on Facebook" : it.label}
                     onClick={(e) => {
                       if (!it.direct) {
                         e.preventDefault();
@@ -247,7 +335,7 @@ export function MobileBottomNav() {
 
       {/* Popup Dialog when clicking non-direct navigation icons */}
       {popupItem && (
-        <div role="dialog" aria-modal="true" className="fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
+        <div role="dialog" aria-modal="true" className="font-montserrat fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
           <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in zoom-in-95 duration-150">
             <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-[#6a2ec0]/10 text-[#6a2ec0]">
               <SparklesIcon className="h-7 w-7" />
@@ -307,7 +395,8 @@ export function MobileFooter() {
 
   return (
     <>
-      <footer className="bg-ink px-5 pt-12 pb-24 text-cream md:hidden">
+      <FontStyle />
+      <footer className="font-montserrat bg-ink px-5 pt-12 pb-24 text-cream md:hidden">
         <Brand tone="light" />
         <p className="mt-5 max-w-xs text-sm leading-7 text-cream/60">Designing, planning and building spaces that balance purpose and expression.</p>
         
@@ -401,7 +490,7 @@ export function MobileFooter() {
 
       {/* Call Confirmation Popup Modal */}
       {showCallPopup && (
-        <div role="dialog" aria-modal="true" className="fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
+        <div role="dialog" aria-modal="true" className="font-montserrat fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
           <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in zoom-in-95 duration-150 text-ink">
             <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary">
               <Phone size={26} />
@@ -488,6 +577,22 @@ function SectionHead({ label, title, link }: { label: string; title: ReactNode; 
     </div>
   );
 }
+/* Two buttons where the clicked one takes the filled colour (animated) and then navigates */
+function useSwitchButtons() {
+  const [active, setActive] = useState(0);
+  const onClick = (i: number) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    if (el.dataset["go"] === "1") { el.dataset["go"] = ""; return; } // second (programmatic) click -> let the Link navigate
+    e.preventDefault();
+    setActive(i);
+    window.setTimeout(() => { el.dataset["go"] = "1"; el.click(); }, 320);
+  };
+  return { active, onClick };
+}
+const switchBtn = (on: boolean) =>
+  `inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-6 text-[13px] font-bold tracking-[0.08em] transition-all duration-300 ease-out active:scale-[0.95] ${
+    on ? "border-forest-deep bg-forest-deep text-cream shadow-md" : "border-forest-deep/30 bg-white text-forest-deep shadow-sm"
+  }`;
 const pill = "inline-flex min-h-11 items-center gap-2 rounded-full bg-forest-deep px-6 text-[13px] font-bold tracking-[0.08em] text-cream transition active:scale-[0.98]";
 
 export function MobileLightbox({ items, index, onClose, onIndex }: { items: { src: string; alt: string }[]; index: number | null; onClose: () => void; onIndex: (i: number) => void }) {
@@ -505,7 +610,7 @@ export function MobileLightbox({ items, index, onClose, onIndex }: { items: { sr
   if (index === null || !items[index]) return null;
   const go = (d: number) => onIndex((index + d + items.length) % items.length);
   return (
-    <div role="dialog" aria-modal="true" aria-label="Image viewer" className="fixed inset-0 z-80 flex flex-col bg-ink text-cream"
+    <div role="dialog" aria-modal="true" aria-label="Image viewer" className="font-montserrat fixed inset-0 z-80 flex flex-col bg-ink text-cream"
       onTouchStart={(e) => (startX.current = e.touches[0]?.clientX ?? null)}
       onTouchEnd={(e) => { if (startX.current === null) return; const dx = (e.changedTouches[0]?.clientX ?? startX.current) - startX.current; if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1); startX.current = null; }}>
       <div className="flex h-16 items-center justify-between px-4">
@@ -534,6 +639,20 @@ const credCards = [
   { t: "Founder", s: "Unnati", Icon: Sparkles },
   { t: "Proprietor", s: "Green Constructions", Icon: Leaf },
   { t: "Proprietor", s: "Cretoverse", Icon: Building },
+];
+
+type BusinessCard = {
+  t: string;
+  d: string;
+  Icon: typeof Building2;
+  logo?: string; // optional: put a real logo image here to replace the icon
+};
+
+const businessCards: BusinessCard[] = [
+  { t: "Green Construction", d: "Planning, construction and interiors built on quality and sustainable design.", Icon: Building2 },
+  { t: "Go Green Enterprise", d: "A sustainable enterprise for a greener tomorrow.", Icon: Leaf },
+  { t: "Cretoverse", d: "A social and portfolio platform for India's creative community.", Icon: Sparkles },
+  { t: "Anmayart", d: "Visual art, design and creative expression.", Icon: Palette },
 ];
 
 type ServiceCard = {
@@ -627,6 +746,8 @@ export function MobileHome() {
   const serviceRef = useRef<HTMLDivElement>(null);
   const projRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
+  const heroSw = useSwitchButtons();
+  const aboutSw = useSwitchButtons();
   const credI = useAutoCarousel(credRef, credCards.length, 3800);
   const serviceI = useAutoCarousel(serviceRef, serviceCardsData.length, 3200);
   const artworks = useArtworks();
@@ -676,16 +797,9 @@ export function MobileHome() {
     return () => observer.disconnect();
   }, []);
 
-  const processSteps = [
-    ["Discover", "Understanding needs, site and aspirations."],
-    ["Plan", "Shaping layouts and technical direction."],
-    ["Design", "Refining form, material and detail."],
-    ["Build", "Executing with care and coordination."],
-    ["Deliver", "Handing over a considered, finished space."]
-  ];
-
   return (
-    <div className="overflow-x-hidden bg-cream md:hidden">
+    <div className="font-montserrat overflow-x-hidden bg-cream md:hidden">
+      <FontStyle />
       {/* HERO / SEO Optimized Centered Intro */}
       <section className="relative px-5 pt-6 pb-4 text-center">
         <div className="m-rise">
@@ -712,8 +826,8 @@ export function MobileHome() {
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/projects" className={`${pill} px-6`}>Explore my work <ArrowRight size={15} /></Link>
-            <Link to="/contact" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-forest-deep/25 px-6 text-[13px] font-bold tracking-[0.08em] text-forest-deep transition active:scale-[0.98]">Contact me <ArrowUpRight size={15} /></Link>
+            <Link to="/projects" onClick={heroSw.onClick(0)} className={switchBtn(heroSw.active === 0)}>Explore my work <ArrowRight size={15} /></Link>
+            <Link to="/contact" onClick={heroSw.onClick(1)} className={switchBtn(heroSw.active === 1)}>Contact me <ArrowUpRight size={15} /></Link>
           </div>
         </div>
 
@@ -786,15 +900,15 @@ export function MobileHome() {
 
           {/* REPLACED 'Know More' BUTTONS: 'About Anmay' & 'Achievement' */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/about" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-forest-deep px-5 text-[12.5px] font-bold tracking-[0.06em] text-cream shadow-md transition active:scale-[0.98]">
+            <Link to="/about" onClick={aboutSw.onClick(0)} className={switchBtn(aboutSw.active === 0)}>
               <span>About Anmay</span>
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-cream">
                 <ArrowRight size={13} strokeWidth={2.5} />
               </span>
             </Link>
-            <Link to="/about" hash="m-experience" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-forest-deep/30 px-5 text-[12.5px] font-bold tracking-[0.06em] text-forest-deep bg-white shadow-sm transition active:scale-[0.98]">
+            <Link to="/achievement" onClick={aboutSw.onClick(1)} className={switchBtn(aboutSw.active === 1)}>
               <span>Achievement</span>
-              <Award size={15} className="text-primary" />
+              <Award size={15} className={`transition-colors duration-300 ${aboutSw.active === 1 ? "text-cream" : "text-primary"}`} />
             </Link>
           </div>
         </div>
@@ -873,12 +987,12 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* HOW I WORK / PROCESS (Bidirectional sliding animation supporting scroll down & scroll up) */}
-      <section ref={processRef} className="px-5 py-12 text-center overflow-hidden">
-        <Label>How I work</Label>
-        <Heading>From Concept<br />to Completion.</Heading>
+      {/* MY BUSINESS (bidirectional sliding animation supporting scroll down & scroll up) */}
+      <section ref={processRef} className="font-montserrat px-5 py-12 text-center overflow-hidden">
+        <h2 className="text-[2rem] leading-[1.15] font-extrabold tracking-tight text-ink">My Business</h2>
+        <span className="mx-auto mt-3 block h-0.75 w-10 bg-gold" />
         <div className="mt-7 grid gap-3">
-          {processSteps.map(([t, d], i) => {
+          {businessCards.map(({ t, d, Icon, logo }, i) => {
             const isEven = i % 2 === 0;
             const animClass = processInView
               ? "translate-x-0 opacity-100"
@@ -890,10 +1004,15 @@ export function MobileHome() {
               <div
                 key={t}
                 style={{ transitionDelay: `${i * 180}ms` }}
-                className={`flex items-center gap-4 rounded-2xl border border-forest-deep/12 bg-card p-4 text-left transition-all duration-700 ease-out transform ${animClass}`}
+                className={`flex items-center gap-4 rounded-2xl border border-forest-deep/12 bg-card p-4 text-left shadow-sm transition-all duration-700 ease-out transform ${animClass}`}
               >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-deep text-sm font-bold text-cream">0{i + 1}</span>
-                <div className="min-w-0"><p className="text-[13px] font-bold tracking-[0.14em] text-ink uppercase">{t}</p><p className="text-[13.5px] text-muted-foreground">{d}</p></div>
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-forest-deep text-cream ring-4 ring-forest-deep/10">
+                  {logo ? <img src={logo} alt="" className="h-8 w-8 object-contain" /> : <Icon size={24} strokeWidth={1.6} />}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold tracking-[0.12em] text-ink uppercase">{t}</p>
+                  <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{d}</p>
+                </div>
               </div>
             );
           })}

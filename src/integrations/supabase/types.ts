@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_videos: {
+        Row: {
+          caption: string
+          category: string
+          created_at: string
+          id: string
+          sort_order: number
+          updated_at: string
+          video_id: string
+          video_url: string
+        }
+        Insert: {
+          caption: string
+          category: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          video_id: string
+          video_url: string
+        }
+        Update: {
+          caption?: string
+          category?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+          video_id?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      certificates: {
+        Row: {
+          created_at: string
+          file_type: string
+          file_url: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          file_type: string
+          file_url: string
+          id?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          file_type?: string
+          file_url?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       artworks: {
         Row: {
           created_at: string

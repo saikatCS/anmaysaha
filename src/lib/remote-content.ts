@@ -9,9 +9,11 @@ export type Project = (typeof staticProjects)[number] & {
 };
 export type GcSection = { title: string; copy: string; image: string };
 export type GcGalleryItem = { src: string; caption: string };
+export type BlogVideo = { id: string; category: 'artworld' | 'construction'; videoId: string; embedUrl: string; title: string };
+export type Certificate = { id: string; title: string; fileUrl: string; fileType: string };
 
-type State = { ready: boolean; artworks: Artwork[]; projects: Project[]; green: GreenProject[] };
-const empty: State = { ready: false, artworks: [], projects: [], green: [] };
+type State = { ready: boolean; artworks: Artwork[]; projects: Project[]; green: GreenProject[]; blogVideos: BlogVideo[]; certificates: Certificate[] };
+const empty: State = { ready: false, artworks: [], projects: [], green: [], blogVideos: [], certificates: [] };
 let state: State = empty;
 let loaded = false;
 const listeners = new Set<() => void>();
@@ -20,12 +22,14 @@ const emit = () => listeners.forEach((l) => l());
 export const GC_SECTION_TITLES = ['Project overview', 'Design & planning', 'Construction', 'Interior', 'Completed space'];
 
 export async function refreshRemoteContent() {
-  const [a, p, g] = await Promise.all([
+  const [a, p, g, v, c] = await Promise.all([
     supabase.from('artworks').select('*').order('sort_order').order('created_at'),
     supabase.from('projects').select('*').order('sort_order').order('created_at'),
     supabase.from('gc_projects').select('*').order('sort_order').order('created_at'),
+    supabase.from('blog_videos').select('*').order('sort_order').order('created_at'),
+    supabase.from('certificates').select('*').order('sort_order').order('created_at'),
   ]);
-  if (a.error || p.error || g.error) throw a.error ?? p.error ?? g.error;
+  if (a.error || p.error || g.error || v.error || c.error) throw a.error ?? p.error ?? g.error ?? v.error ?? c.error;
   state = {
     ready: true,
     artworks: (a.data ?? []).map((r) => ({ remoteId: r.id, slug: `art-${r.id}`, title: r.title, medium: r.medium || 'Artwork', image: r.image ?? '', description: r.description })),
@@ -44,6 +48,19 @@ export async function refreshRemoteContent() {
         gallery: ((r.gallery as GcGalleryItem[]) ?? []).map((x) => ({ src: x.src, alt: x.caption || r.title })),
       } satisfies GreenProject;
     }),
+    blogVideos: (v.data ?? []).map((r) => ({
+      id: r.id,
+      category: r.category as 'artworld' | 'construction',
+      videoId: r.video_id,
+      embedUrl: r.video_url,
+      title: r.caption,
+    })),
+    certificates: (c.data ?? []).map((r) => ({
+      id: r.id,
+      title: r.title,
+      fileUrl: r.file_url,
+      fileType: r.file_type,
+    })),
   };
   loaded = true;
   emit();
@@ -61,3 +78,11 @@ const useRemote = () => useSyncExternalStore(subscribe, () => state, () => empty
 export const useArtworks = (): Artwork[] => { const s = useRemote(); return useMemo(() => s.ready ? s.artworks : staticArtworks, [s]); };
 export const useProjects = (): Project[] => { const s = useRemote(); return useMemo(() => s.ready ? s.projects : staticProjects, [s]); };
 export const useGreenProjects = (): GreenProject[] => { const s = useRemote(); return useMemo(() => s.ready ? s.green : staticGreen, [s]); };
+export const useBlogVideos = (category: 'artworld' | 'construction'): BlogVideo[] => {
+  const s = useRemote();
+  return useMemo(() => s.blogVideos.filter((video) => video.category === category), [category, s]);
+};
+export const useCertificates = (): Certificate[] => {
+  const s = useRemote();
+  return useMemo(() => s.certificates, [s]);
+};

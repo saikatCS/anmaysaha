@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { Loader2, LogOut, Trash2, Pencil, ImagePlus, Palette, Building2, HardHat } from 'lucide-react';
+import { Loader2, LogOut, Trash2, Pencil, ImagePlus, Palette, Building2, HardHat, Video, Award } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/admin')({
 });
 
 const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
-async function uploadImage(file: File): Promise<string> {
+async function uploadMedia(file: File): Promise<string> {
   const ext = file.name.split('.').pop() || 'jpg';
   const path = `uploads/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from('media').upload(path, file, { contentType: file.type });
@@ -23,6 +23,7 @@ async function uploadImage(file: File): Promise<string> {
   if (e2 || !data) throw e2 ?? new Error('Could not create image link');
   return data.signedUrl;
 }
+const uploadImage = uploadMedia;
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) + '-' + Math.random().toString(36).slice(2, 6);
 
 function AdminPage() {
@@ -49,11 +50,11 @@ function Login({ onDone }: { onDone: () => Promise<void> }) {
   return <main className="grid min-h-screen place-items-center bg-cream p-5"><form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-soft"><p className="eyebrow">Anmay Art</p><h1 className="mt-2 text-3xl">Admin login</h1><label className="mt-6 block text-sm font-semibold">Email<Input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-1.5" /></label><label className="mt-4 block text-sm font-semibold">Password<Input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="mt-1.5" /></label>{err && <p className="mt-3 text-sm text-destructive">{err}</p>}<Button type="submit" disabled={busy} className="mt-6 h-11 w-full">{busy ? <Loader2 className="animate-spin" /> : 'Sign in'}</Button><Link to="/" className="mt-4 block text-center text-sm text-muted-foreground">Back to website</Link></form></main>;
 }
 
-type Tab = 'art' | 'recent' | 'gc';
+type Tab = 'art' | 'recent' | 'gc' | 'art-blog' | 'construction-blog' | 'certificates';
 function Panel({ onSignOut }: { onSignOut: () => void }) {
   const [tab, setTab] = useState<Tab>('art');
-  const tabs: [Tab, string, ReactNode][] = [['art', 'Art Work', <Palette key="a" size={18} />], ['recent', 'Recent Work', <Building2 key="r" size={18} />], ['gc', 'GC Project', <HardHat key="g" size={18} />]];
-  return <main className="min-h-screen bg-cream"><header className="border-b border-border bg-card"><div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4"><div><p className="eyebrow">Anmay Art</p><h1 className="text-2xl">Admin panel</h1></div><div className="flex gap-2"><Button asChild variant="outline"><Link to="/">View site</Link></Button><Button variant="ghost" onClick={onSignOut}><LogOut /> Sign out</Button></div></div></header><div className="mx-auto max-w-5xl px-5 py-8"><div className="flex flex-wrap gap-2">{tabs.map(([k, l, i]) => <Button key={k} variant={tab === k ? 'default' : 'outline'} className="h-11" onClick={() => setTab(k)}>{i}{l}</Button>)}</div><div className="mt-8">{tab === 'art' ? <ArtAdmin /> : tab === 'recent' ? <RecentAdmin /> : <GcAdmin />}</div></div></main>;
+  const tabs: [Tab, string, ReactNode][] = [['art', 'Art Work', <Palette key="a" size={18} />], ['recent', 'Recent Work', <Building2 key="r" size={18} />], ['gc', 'GC Project', <HardHat key="g" size={18} />], ['art-blog', 'ArtWorld Blog', <Video key="ab" size={18} />], ['construction-blog', 'Construction Blog', <Video key="cb" size={18} />], ['certificates', 'Certificates', <Award key="c" size={18} />]];
+  return <main className="min-h-screen bg-cream"><header className="border-b border-border bg-card"><div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4"><div><p className="eyebrow">Anmay Art</p><h1 className="text-2xl">Admin panel</h1></div><div className="flex gap-2"><Button asChild variant="outline"><Link to="/">View site</Link></Button><Button variant="ghost" onClick={onSignOut}><LogOut /> Sign out</Button></div></div></header><div className="mx-auto max-w-5xl px-5 py-8"><div className="flex flex-wrap gap-2">{tabs.map(([k, l, i]) => <Button key={k} variant={tab === k ? 'default' : 'outline'} className="h-11" onClick={() => setTab(k)}>{i}{l}</Button>)}</div><div className="mt-8">{tab === 'art' ? <ArtAdmin /> : tab === 'recent' ? <RecentAdmin /> : tab === 'gc' ? <GcAdmin /> : tab === 'certificates' ? <CertificateAdmin /> : <BlogAdmin category={tab === 'art-blog' ? 'artworld' : 'construction'} />}</div></div></main>;
 }
 
 const Card = ({ title, children }: { title: string; children: ReactNode }) => <section className="rounded-2xl border border-border bg-card p-6"><h2 className="text-xl">{title}</h2><div className="mt-5 space-y-4">{children}</div></section>;
@@ -80,6 +81,65 @@ function useSubmit() {
 const Save = ({ busy, msg, editing, onCancel }: { busy: boolean; msg: string; editing?: boolean; onCancel?: () => void }) => <div><div className="flex flex-wrap gap-2"><Button type="submit" disabled={busy} className="h-11">{busy ? <><Loader2 className="animate-spin" /> Uploading…</> : editing ? 'Save changes' : 'Save & publish'}</Button>{editing && <Button type="button" variant="outline" className="h-11" onClick={onCancel}>Cancel editing</Button>}</div>{msg && <p className="mt-2 text-sm text-muted-foreground">{msg}</p>}</div>;
 const Current = ({ src }: { src?: string | null | undefined }) => src ? <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground"><img src={src} alt="" className="h-10 w-10 rounded object-cover" />Current image — choose a file only to replace it</div> : null;
 const up = (f: File | null, old?: string | null) => f ? uploadImage(f) : Promise.resolve(old ?? '');
+
+type BlogRow = { id: string; category: string; video_id: string; video_url: string; caption: string };
+type CertificateRow = { id: string; title: string; file_url: string; file_type: string };
+const youtubeId = (value: string) => {
+  try {
+    const url = new URL(value.trim());
+    if (url.hostname === 'youtu.be') return url.pathname.slice(1).split('/')[0] || null;
+    if (url.hostname.endsWith('youtube.com')) {
+      if (url.pathname === '/watch') return url.searchParams.get('v');
+      const match = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/);
+      return match?.[1] ?? null;
+    }
+  } catch { return null; }
+  return null;
+};
+
+function BlogAdmin({ category }: { category: 'artworld' | 'construction' }) {
+  const [rows, setRows] = useState<BlogRow[]>([]); const [edit, setEdit] = useState<BlogRow | null>(null);
+  const [url, setUrl] = useState(''); const [caption, setCaption] = useState(''); const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false);
+  const load = async () => { const { data, error } = await supabase.from('blog_videos').select('*').eq('category', category).order('sort_order').order('created_at'); if (error) setMsg(`Could not load videos: ${error.message}`); else setRows((data as BlogRow[]) ?? []); };
+  useEffect(() => { load(); }, [category]);
+  const reset = () => { setEdit(null); setUrl(''); setCaption(''); };
+  const submit = async (e: FormEvent) => {
+    e.preventDefault(); const id = youtubeId(url); if (!id || !caption.trim()) { setMsg('Enter a valid YouTube URL and caption.'); return; }
+    setBusy(true); setMsg('');
+    const payload = { category, video_id: id, video_url: `https://www.youtube.com/embed/${id}`, caption: caption.trim() };
+    const result = edit ? await supabase.from('blog_videos').update(payload).eq('id', edit.id) : await supabase.from('blog_videos').insert(payload);
+    if (result.error) setMsg(`Could not save: ${result.error.message}`); else {
+      try { setMsg('Video published successfully.'); reset(); await load(); await refreshRemoteContent(); }
+      catch (error) { setMsg(`Saved, but the live page could not refresh: ${error instanceof Error ? error.message : 'unknown error'}`); }
+    }
+    setBusy(false);
+  };
+  const remove = async (id: string) => { if (!confirm('Delete this video from the website?')) return; const { error } = await supabase.from('blog_videos').delete().eq('id', id); if (error) setMsg(`Could not delete: ${error.message}`); else await load(); };
+  return <div className="grid gap-6"><form onSubmit={submit}><Card title={`${category === 'artworld' ? 'ArtWorld' : 'Construction'} Blog`}><Field label="YouTube video URL"><Input required type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." /></Field><Field label="Caption"><Input required value={caption} onChange={e => setCaption(e.target.value)} /></Field><div className="flex gap-2"><Button type="submit" disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : edit ? 'Save changes' : 'Publish video'}</Button>{edit && <Button type="button" variant="outline" onClick={reset}>Cancel</Button>}</div>{msg && <p className="text-sm text-muted-foreground">{msg}</p>}</Card></form><ul className="divide-y divide-border rounded-2xl border border-border bg-card">{rows.map(row => <li key={row.id} className="flex items-center gap-3 p-4"><img src={`https://i.ytimg.com/vi/${row.video_id}/hqdefault.jpg`} alt="" className="h-14 w-24 rounded object-cover" /><span className="flex-1 font-semibold">{row.caption}</span><Button variant="ghost" size="icon" aria-label={`Edit ${row.caption}`} onClick={() => { setEdit(row); setUrl(row.video_url); setCaption(row.caption); }}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${row.caption}`} onClick={() => remove(row.id)}><Trash2 /></Button></li>)}</ul></div>;
+}
+
+function CertificateAdmin() {
+  const [rows, setRows] = useState<CertificateRow[]>([]); const [edit, setEdit] = useState<CertificateRow | null>(null);
+  const [file, setFile] = useState<File | null>(null); const [title, setTitle] = useState(''); const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false); const [key, setKey] = useState(0);
+  const load = async () => { const { data, error } = await supabase.from('certificates').select('*').order('sort_order').order('created_at'); if (error) setMsg(`Could not load certificates: ${error.message}`); else setRows((data as CertificateRow[]) ?? []); };
+  useEffect(() => { load(); }, []);
+  const reset = () => { setEdit(null); setFile(null); setTitle(''); setKey(value => value + 1); };
+  const submit = async (e: FormEvent) => {
+    e.preventDefault(); if (!title.trim() || (!file && !edit)) { setMsg('Choose an image or PDF and enter a caption.'); return; }
+    if (file && !['application/pdf', 'image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setMsg('Use a PDF, JPG, PNG, or WebP certificate.'); return; }
+    setBusy(true); setMsg('');
+    try {
+      const fileUrl = file ? await uploadMedia(file) : edit?.file_url ?? ''; const fileType = file?.type ?? edit?.file_type ?? 'image/jpeg';
+      const result = edit ? await supabase.from('certificates').update({ title: title.trim(), file_url: fileUrl, file_type: fileType }).eq('id', edit.id) : await supabase.from('certificates').insert({ title: title.trim(), file_url: fileUrl, file_type: fileType });
+      if (result.error) setMsg(`Could not save: ${result.error.message}`); else { setMsg('Certificate saved successfully.'); reset(); await load(); await refreshRemoteContent(); }
+    } catch (error) {
+      setMsg(`Could not save: ${error instanceof Error ? error.message : 'unknown error'}`);
+    }
+    setBusy(false);
+  };
+  const remove = async (id: string) => { if (!confirm('Delete this certificate from the website?')) return; const { error } = await supabase.from('certificates').delete().eq('id', id); if (error) setMsg(`Could not delete: ${error.message}`); else await load(); };
+  return <div className="grid gap-6"><form key={key} onSubmit={submit}><Card title={edit ? `Edit certificate — ${edit.title}` : 'Add certificate'}><Field label="Certificate image or PDF"><Input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required={!edit} onChange={e => setFile(e.target.files?.[0] ?? null)} /></Field><Field label="Caption"><Input required value={title} onChange={e => setTitle(e.target.value)} /></Field><div className="flex gap-2"><Button type="submit" disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : edit ? 'Save changes' : 'Save certificate'}</Button>{edit && <Button type="button" variant="outline" onClick={reset}>Cancel</Button>}</div>{msg && <p className="text-sm text-muted-foreground">{msg}</p>}</Card></form><ul className="divide-y divide-border rounded-2xl border border-border bg-card">{rows.map(row => <li key={row.id} className="flex items-center gap-3 p-4"><span className="flex-1 font-semibold">{row.title}</span><Button variant="ghost" size="icon" aria-label={`Edit ${row.title}`} onClick={() => { setEdit(row); setTitle(row.title); setFile(null); }}><Pencil /></Button><Button variant="ghost" size="icon" aria-label={`Delete ${row.title}`} onClick={() => remove(row.id)}><Trash2 /></Button></li>)}</ul></div>;
+}
 
 function ArtAdmin() {
   const list = useList('artworks'); const s = useSubmit();

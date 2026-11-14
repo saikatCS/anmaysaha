@@ -1,4 +1,4 @@
-@import "tailwindcss" source(none);
+﻿@import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
 
@@ -56,9 +56,9 @@
   --color-chart-3: var(--gold);
   --color-chart-4: var(--muted-foreground);
   --color-chart-5: var(--ink);
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-script: "Great Vibes", cursive;
+  --font-serif: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --shadow-soft: 0 10px 30px -18px rgba(26, 26, 26, 0.35);
   --shadow-lift: 0 22px 50px -24px rgba(26, 26, 26, 0.4);
 }
@@ -247,7 +247,7 @@ section[id] { scroll-margin-top: 84px; }
   --input: #d9d0f0;
   --ring: #6a2ec0;
 
-  --anmay-display: "Bricolage Grotesque", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --anmay-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   font-family: var(--font-sans);
 }
 .anmay h1, .anmay h2, .anmay h3, .anmay .font-serif { font-family: var(--anmay-display); letter-spacing: -0.015em; }
