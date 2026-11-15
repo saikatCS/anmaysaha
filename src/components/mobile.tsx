@@ -39,11 +39,11 @@ const EMAIL_BODY = encodeURIComponent("Hello Er. Anmay Saha,\n\nI would like to 
 const menuLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "Artwork", to: "/artworks" },
-  { label: "Unnati", href: UNNATI_FACEBOOK },
-  { label: "Work", to: "/projects" },
-  { label: "Services", to: "/", hash: "m-services" },
-  { label: "Contact", to: "/contact" },
+  { label: "Art World", to: "/artworks" },
+  { label: "Life Unnati", href: UNNATI_FACEBOOK },
+  { label: "Green Construction", to: "/green-constructions" },
+  { label: "Cretoverse", href: CRETOVERSE },
+  { label: "Contacts", to: "/contact" },
 ] as const;
 
 const roles = [
@@ -149,10 +149,15 @@ export function MobileHeader() {
   const [skipIntro] = useState(logoVideoPlayed); // header re-mounted after the intro already played
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+    if (!open) return () => window.removeEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
   }, [open]);
   return (
     <>
@@ -184,8 +189,17 @@ export function MobileHeader() {
         .nav-static .nav-line { transform: none; opacity: 1; }
         .nav-static .nav-title-1, .nav-static .nav-title-2 { opacity: 1; }
         .nav-static .nav-logo-in { animation: none; }
+        .mobile-menu-backdrop { opacity: 0; pointer-events: none; transition: opacity 260ms ease; }
+        .mobile-menu-backdrop[data-open="true"] { opacity: 1; pointer-events: auto; }
+        .mobile-menu-panel { transform: translateX(100%); transition: transform 360ms cubic-bezier(.22,1,.36,1); }
+        .mobile-menu-panel[data-open="true"] { transform: translateX(0); }
+        .mobile-menu-link { transition: background-color 180ms ease, color 180ms ease; }
+        .mobile-menu-link:active { background-color: var(--accent); color: var(--primary); }
+        .mobile-menu-action { transition: transform 180ms ease, background-color 180ms ease; }
+        .mobile-menu-action:active { transform: translateY(1px); }
         @media (prefers-reduced-motion: reduce) {
-          .nav-logo-in, .nav-on .nav-line, .nav-on .nav-title-1, .nav-on .nav-title-2 { animation: none; }
+          .nav-logo-in, .nav-on .nav-line, .nav-on .nav-title-1, .nav-on .nav-title-2,
+          .mobile-menu-backdrop, .mobile-menu-panel, .mobile-menu-link, .mobile-menu-action { animation: none; transition: none; }
           .nav-line { transform: none; opacity: 1; }
           .nav-title-1, .nav-title-2 { opacity: 1; }
         }
@@ -209,39 +223,45 @@ export function MobileHeader() {
           </div>
 
           <div className="flex shrink-0 items-center">
-            <button type="button" aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(true)} className="grid h-12 w-12 place-items-center rounded-full text-primary focus-visible:outline-2 focus-visible:outline-primary"><Menu size={30} strokeWidth={2.2} /></button>
+            <button type="button" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(!open)} className="grid h-12 w-12 place-items-center rounded-full text-primary focus-visible:outline-2 focus-visible:outline-primary"><Menu size={30} strokeWidth={2.2} /></button>
           </div>
         </div>
       </header>
-      {open && (
-        <div role="dialog" aria-modal="true" aria-label="Menu" className="font-montserrat m-menu fixed inset-0 z-70 flex flex-col overflow-y-auto bg-cream px-5 pb-10 md:hidden">
-          <div className="flex h-17 shrink-0 items-center justify-between">
+      <div className="mobile-menu-backdrop fixed inset-0 z-70 bg-black/35 md:hidden" data-open={open} aria-hidden={!open} onClick={() => setOpen(false)}>
+        <div role="dialog" aria-modal="true" aria-label="Mobile navigation" className="mobile-menu-panel absolute right-0 top-0 flex h-full w-[min(88vw,390px)] flex-col overflow-y-auto bg-cream px-5 pb-8 shadow-2xl" data-open={open} onClick={(e) => e.stopPropagation()}>
+          <div className="flex h-20 shrink-0 items-center justify-between border-b border-forest-deep/10">
             <Brand compact />
             <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className="grid h-11 w-11 place-items-center rounded-full border border-forest-deep/15 text-forest-deep"><X size={22} /></button>
           </div>
-          <nav aria-label="Mobile menu" className="mt-6 grid">
+          <nav aria-label="Mobile menu" className="mt-3 grid">
             {menuLinks.map((l, i) => (
               "href" in l ? (
                 <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}
-                  className="m-rise flex items-baseline gap-4 border-b border-forest-deep/10 py-3.5 font-serif text-[2rem] leading-tight text-ink"
+                  className="mobile-menu-link m-rise flex min-h-14 items-center gap-4 border-b border-forest-deep/10 px-2 py-3 font-serif text-[clamp(1.15rem,6vw,1.5rem)] leading-tight text-ink"
                   style={{ animationDelay: `${120 + i * 40}ms` }}>
-                  <span className="font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}
+                  <span className="w-6 shrink-0 font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}<ExternalLink className="ml-auto shrink-0 text-primary" size={16} />
                 </a>
               ) : (
-                <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} onClick={() => setOpen(false)}
-                  className="m-rise flex items-baseline gap-4 border-b border-forest-deep/10 py-3.5 font-serif text-[2rem] leading-tight text-ink"
+                <Link key={l.label} to={l.to} onClick={() => setOpen(false)}
+                  className="mobile-menu-link m-rise flex min-h-14 items-center gap-4 border-b border-forest-deep/10 px-2 py-3 font-serif text-[clamp(1.15rem,6vw,1.5rem)] leading-tight text-ink"
                   style={{ animationDelay: `${120 + i * 40}ms` }}>
-                  <span className="font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}
+                  <span className="w-6 shrink-0 font-sans text-xs font-semibold text-primary">0{i + 1}</span>{l.label}<ArrowRight className="ml-auto shrink-0 text-primary" size={17} />
                 </Link>
               )
             ))}
           </nav>
-          <div className="mt-8 grid gap-3">
-            <Link to="/green-constructions" onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-between rounded-2xl bg-forest-deep px-5 py-4 text-sm font-bold tracking-[0.14em] text-cream">GREEN CONSTRUCTIONS <ArrowRight size={18} /></Link>
-            <a href={CRETOVERSE} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-between rounded-2xl border border-forest-deep/20 px-5 py-4 text-sm font-bold tracking-[0.14em] text-forest-deep">CRETOVERSE <ExternalLink size={18} /></a>
+          <div className="mt-auto grid gap-3 border-t border-forest-deep/10 pt-6">
+            <a href={`tel:${PHONE_NUMBER}`} onClick={() => setOpen(false)} className="mobile-menu-action flex min-h-14 items-center gap-3 rounded-2xl bg-forest-deep px-5 py-3 text-cream">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10"><Phone size={18} /></span>
+              <span><span className="block text-xs font-semibold uppercase tracking-[0.16em] text-cream/65">Call</span><span className="block text-sm font-bold">{PHONE_NUMBER}</span></span>
+            </a>
+            <a href={`mailto:${EMAIL_ADDRESS}`} onClick={() => setOpen(false)} className="mobile-menu-action flex min-h-14 items-center gap-3 rounded-2xl border border-forest-deep/20 px-5 py-3 text-forest-deep">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-forest-deep/10"><Mail size={18} /></span>
+              <span><span className="block text-xs font-semibold uppercase tracking-[0.16em] text-forest-deep/60">Email</span><span className="block text-sm font-bold">{EMAIL_ADDRESS}</span></span>
+            </a>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
