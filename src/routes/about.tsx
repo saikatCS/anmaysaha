@@ -12,7 +12,7 @@ export const Route = createFileRoute('/about')({
       path: '/about',
       title: 'About Anmay Saha | Civil Engineer & AMC Approved Building Planner, Agartala',
       description:
-        'B.Tech Civil Engineer, M.Tech in Materials Science, AMC approved Building Planner and Associate Member of the Institution of Engineers (India), based in Agartala, Tripura.',
+        'B.Tech Civil Engineer, M.Tech in Materials Science Engineer, AMC approved Building Planner and Associate Member of the Institution of Engineers (India), based in Agartala, Tripura.',
       type: 'profile',
       jsonLd: [personLd, crumbs([['Home', '/'], ['About', '/about']])],
     }),

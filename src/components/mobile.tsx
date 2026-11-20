@@ -23,6 +23,7 @@ const CRETOVERSE = "https://cretoverse.com";
 const UNNATI_FACEBOOK = "https://www.facebook.com/";
 const WEB_INNOVEX = "https://webinnovex360.online";
 const LOGO_VIDEO = "/animatedlogo.mp4"; // file lives in the /public folder
+const FACEBOOK_SHARE = "https://www.facebook.com/share/1CWdHVbWVJ"; // direct link to the Facebook share page for the website
 
 // Social Links
 const INSTAGRAM_LINK = "https://www.instagram.com/anmayart.com";
@@ -40,7 +41,8 @@ const menuLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Art World", to: "/artworks" },
-  { label: "Life Unnati", href: UNNATI_FACEBOOK },
+  { label: "Life", href: FACEBOOK_SHARE },
+  { label: "Unnati", href: UNNATI_FACEBOOK },
   { label: "Green Construction", to: "/green-constructions" },
   { label: "Cretoverse", href: CRETOVERSE },
   { label: "Contacts", to: "/contact" },
@@ -59,8 +61,6 @@ const roles = [
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
 
-/* Loads Montserrat and applies it to everything inside any element with the .font-montserrat class
-   (the signature, .font-script, keeps its own script font) */
 function FontStyle() {
   return (
     <style>{`
@@ -70,20 +70,12 @@ function FontStyle() {
   );
 }
 
-/* Animated logo (public/animatedlogo.mp4) - plays ONCE per page load.
-   - starts automatically when the website is opened / refreshed
-   - plays the whole animation, then pauses on its final frame (the finished logo) and never replays
-   - re-renders, scrolling and route changes cannot restart it: the "already played" flag lives in module
-     memory (it resets only on a full refresh / new visit), and the video has no loop / autoplay attribute
-   - the box has a fixed size, so nothing shifts while the video loads or plays
-   - if the video cannot play (blocked, missing, stalled) the static Brand logo is shown instead
-   - with "reduce motion" enabled the video is not played, it just shows the final frame */
 let logoVideoPlayed = false;
 
 function LogoVideo({ onDone }: { onDone: () => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   const readyRef = useRef(false);
-  const resting = useRef(false); // true = show the final frame without playing
+  const resting = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -92,12 +84,11 @@ function LogoVideo({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
-    v.muted = true; // required so phones allow autoplay
+    v.muted = true;
     v.loop = false;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (logoVideoPlayed || reduceMotion) {
-      // do not replay: jump to the last frame and stay there
       resting.current = true;
       const rest = () => { v.currentTime = Math.max(0, (v.duration || 0) - 0.05); };
       if (v.readyState >= 1) rest();
@@ -107,8 +98,7 @@ function LogoVideo({ onDone }: { onDone: () => void }) {
       return () => { v.removeEventListener("loadedmetadata", rest); window.clearTimeout(restSafety); };
     }
 
-    v.play().catch(() => { setFailed(true); onDone(); }); // autoplay blocked -> static logo
-    // safety net: if the video stalls, show the static logo and still reveal the rest of the nav bar
+    v.play().catch(() => { setFailed(true); onDone(); });
     const safety = window.setTimeout(() => {
       if (!readyRef.current) setFailed(true);
       onDone();
@@ -119,7 +109,6 @@ function LogoVideo({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="relative h-13 w-13 shrink-0">
-      {/* static logo: only used when the video cannot play */}
       {failed && (
         <div className="absolute inset-0 [&>*>*:not(:first-child)]:hidden [&_svg~*]:hidden [&_img~*]:hidden [&_svg]:h-13 [&_svg]:w-13 [&_img]:h-13 [&_img]:w-13">
           <Brand compact />
@@ -146,7 +135,7 @@ function LogoVideo({ onDone }: { onDone: () => void }) {
 
 export function MobileHeader() {
   const [open, setOpen] = useState(false);
-  const [skipIntro] = useState(logoVideoPlayed); // header re-mounted after the intro already played
+  const [skipIntro] = useState(logoVideoPlayed);
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -162,7 +151,6 @@ export function MobileHeader() {
   return (
     <>
       <FontStyle />
-      {/* Animations for the new nav bar (kept local so no other file needs to change) */}
       <style>{`
         @keyframes navLineGrow {
           0%   { transform: scaleY(0); opacity: 0; }
@@ -178,14 +166,11 @@ export function MobileHeader() {
           100% { opacity: 1; transform: translateY(0); }
         }
         .nav-logo-in  { animation: navLogoIn 600ms ease-out both; }
-        /* hidden until the logo video has finished playing */
         .nav-line     { transform-origin: bottom center; transform: scaleY(0); opacity: 0; }
         .nav-title-1, .nav-title-2 { opacity: 0; }
-        /* then the line grows from the bottom of the bar to the top, and the text appears and stays */
         .nav-on .nav-line    { animation: navLineGrow 900ms cubic-bezier(.22,1,.36,1) both; }
         .nav-on .nav-title-1 { animation: navTextIn 600ms ease-out 700ms both; }
         .nav-on .nav-title-2 { animation: navTextIn 600ms ease-out 900ms both; }
-        /* header re-mounted later (page change): show the final state without replaying */
         .nav-static .nav-line { transform: none; opacity: 1; }
         .nav-static .nav-title-1, .nav-static .nav-title-2 { opacity: 1; }
         .nav-static .nav-logo-in { animation: none; }
@@ -207,16 +192,13 @@ export function MobileHeader() {
 
       <header className="font-montserrat sticky top-0 z-50 border-b border-forest-deep/10 bg-cream/95 backdrop-blur md:hidden">
         <div className={`flex h-20 items-center gap-3 px-4 ${skipIntro ? "nav-static" : introDone ? "nav-on" : ""}`}>
-          {/* Animated logo video (plays once, then pauses on its last frame), "AnmayArt" below it */}
           <Link to="/" aria-label="Anmay Art home" className="nav-logo-in flex shrink-0 flex-col items-center justify-center gap-1 leading-none">
             <LogoVideo onDone={() => setIntroDone(true)} />
             <span className="text-[13px] font-bold tracking-tight text-primary">AnmayArt</span>
           </Link>
 
-          {/* Thin vertical line: after the logo video ends it grows from the bottom of the bar to the top */}
           <span aria-hidden className="nav-line block h-16 w-px shrink-0 bg-primary" />
 
-          {/* Text appears after the line and then stays */}
           <div className="min-w-0 flex-1 leading-tight">
             <p className="nav-title-1 whitespace-nowrap text-[18px] font-bold text-ink">Visual Art</p>
             <p className="nav-title-2 mt-0.5 whitespace-nowrap text-[12px] text-muted-foreground">Design &amp; Construction</p>
@@ -266,7 +248,6 @@ export function MobileHeader() {
   );
 }
 
-/* 5-button floating bottom bar: Construction | Unnati (direct) | Artworks (direct) | Cretoverse (direct) | Contact with popup for others */
 export function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname === p || pathname.startsWith(p + "/"));
@@ -353,7 +334,6 @@ export function MobileBottomNav() {
         </ul>
       </nav>
 
-      {/* Popup Dialog when clicking non-direct navigation icons */}
       {popupItem && (
         <div role="dialog" aria-modal="true" className="font-montserrat fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
           <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in zoom-in-95 duration-150">
@@ -420,57 +400,22 @@ export function MobileFooter() {
         <Brand tone="light" />
         <p className="mt-5 max-w-xs text-sm leading-7 text-cream/60">Designing, planning and building spaces that balance purpose and expression.</p>
         
-        {/* Social Media & Direct Action Icons */}
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          {/* Instagram */}
-          <a
-            href={INSTAGRAM_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white"
-          >
+          <a href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white">
             <InstagramIcon size={20} />
           </a>
-          {/* Facebook */}
-          <a
-            href={FACEBOOK_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-            className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white"
-          >
+          <a href={FACEBOOK_LINK} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white">
             <FacebookIcon size={20} />
           </a>
-          {/* YouTube */}
-          <a
-            href={YOUTUBE_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-            className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white"
-          >
+          <a href={YOUTUBE_LINK} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white">
             <YoutubeIcon size={20} />
           </a>
-          {/* LinkedIn */}
-          <a
-            href={LINKEDIN_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white"
-          >
+          <a href={LINKEDIN_LINK} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white">
             <LinkedinIcon size={20} />
           </a>
-          {/* Email with pre-written subject & body */}
-          <a
-            href={`mailto:${EMAIL_ADDRESS}?subject=${EMAIL_SUBJECT}&body=${EMAIL_BODY}`}
-            aria-label="Email Er. Anmay Saha"
-            className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white"
-          >
+          <a href={`mailto:${EMAIL_ADDRESS}?subject=${EMAIL_SUBJECT}&body=${EMAIL_BODY}`} aria-label="Email Er. Anmay Saha" className="grid h-11 w-11 place-items-center rounded-full bg-cream/10 text-cream transition hover:bg-primary hover:text-white">
             <Mail size={20} />
           </a>
-          {/* Call Icon triggering confirmation popup */}
           <button
             type="button"
             onClick={() => setShowCallPopup(true)}
@@ -486,7 +431,7 @@ export function MobileFooter() {
             "href" in l ? (
               <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</a>
             ) : (
-              <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</Link>
+              <Link key={l.label} to={l.to} className="flex min-h-11 items-center text-sm text-cream/75">{l.label}</Link>
             )
           ))}
         </nav>
@@ -496,7 +441,6 @@ export function MobileFooter() {
         </div>
         <p className="mt-6 flex items-center gap-2 text-xs text-cream/50"><MapPin size={14} /> {contact.location}</p>
         
-        {/* Centralized Copyright and Developed & Managed lines */}
         <div className="mt-6 pt-6 border-t border-cream/10 text-center flex flex-col items-center justify-center gap-1.5">
           <p className="text-xs text-cream/40">© 2026 Anmay Art. All rights reserved.</p>
           <p className="text-xs text-cream/60">
@@ -508,7 +452,6 @@ export function MobileFooter() {
         </div>
       </footer>
 
-      {/* Call Confirmation Popup Modal */}
       {showCallPopup && (
         <div role="dialog" aria-modal="true" className="font-montserrat fixed inset-0 z-90 flex items-center justify-center bg-black/60 px-5 md:hidden animate-in fade-in duration-150">
           <div className="w-full max-w-xs rounded-3xl bg-white p-6 text-center shadow-2xl animate-in zoom-in-95 duration-150 text-ink">
@@ -597,12 +540,11 @@ function SectionHead({ label, title, link }: { label: string; title: ReactNode; 
     </div>
   );
 }
-/* Two buttons where the clicked one takes the filled colour (animated) and then navigates */
 function useSwitchButtons() {
   const [active, setActive] = useState(0);
   const onClick = (i: number) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
-    if (el.dataset["go"] === "1") { el.dataset["go"] = ""; return; } // second (programmatic) click -> let the Link navigate
+    if (el.dataset["go"] === "1") { el.dataset["go"] = ""; return; }
     e.preventDefault();
     setActive(i);
     window.setTimeout(() => { el.dataset["go"] = "1"; el.click(); }, 320);
@@ -652,7 +594,7 @@ export function MobileLightbox({ items, index, onClose, onIndex }: { items: { sr
 
 const credCards = [
   { t: "B.Tech", s: "Civil Engineering", Icon: GraduationCap },
-  { t: "M.Tech", s: "Materials Science", Icon: GraduationCap },
+  { t: "M.Tech", s: "Materials Science Engineer", Icon: GraduationCap },
   { t: "Grade I", s: "Building Planner AMC", Icon: Building2 },
   { t: "Associate Member", s: "Institution of Engineers (India)", Icon: Users },
   { t: "Secretary", s: "AMBPA", Icon: Award },
@@ -665,7 +607,7 @@ type BusinessCard = {
   t: string;
   d: string;
   Icon: typeof Building2;
-  logo?: string; // optional: put a real logo image here to replace the icon
+  logo?: string;
 };
 
 const businessCards: BusinessCard[] = [
@@ -685,11 +627,11 @@ type ServiceCard = {
 };
 
 const serviceCardsData: ServiceCard[] = [
-  { t: "Building Planning", Icon: DraftingCompass, img: card1, items: ["Buildings", "Bridges", "Temples", "Parks", "Reservoirs", "Roads"], etc: true },
-  { t: "Building Construction", Icon: HardHat, img: card2, desc: "Construction of buildings and other structures." },
+  { t: "Planning", Icon: DraftingCompass, img: card1, items: ["Buildings", "Bridges", "Temples", "Parks", "Reservoirs", "Roads"], etc: true },
+  { t: "Construction", Icon: HardHat, img: card2, desc: "Construction of buildings and other structures." },
   { t: "Interior Designing & Execution", Icon: Paintbrush, img: card3, items: ["Hotels", "Residences", "Parks", "Resorts"], etc: true },
   { t: "Construction & Renovation", Icon: Layers3, img: card4, desc: "Construction and renovation of existing spaces." },
-  { t: "Painting, Sculpting & Art", Icon: Palette, img: card5, desc: "Painting, sculpting and creative artwork." },
+  { t: "Painting & Sculpting", Icon: Palette, img: card5, desc: "Painting, sculpting and creative artwork." },
   { t: "Writing", Icon: FileText, img: card6, desc: "Creative and thoughtful writing." },
 ];
 
@@ -826,14 +768,13 @@ export function MobileHome() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
-              Hello! 👋
+              Hello! 
             </span>
             <h1 className="font-serif text-[2.6rem] leading-[1.08] font-bold text-ink mt-1">
               I'm <span className="text-primary">Anmay Saha</span>
             </h1>
           </div>
 
-          {/* Typewriter Role Container */}
           <div className="mt-2 h-9 flex items-center justify-center">
             <p className="text-base font-semibold text-primary tracking-wide">
               {currentText}
@@ -879,7 +820,7 @@ export function MobileHome() {
         <Dots count={credCards.length} active={credI} />
       </section>
 
-      {/* ABOUT ME (Static Box with Brand Border Matching Primary / #6a2ec0, Increased Font Size, No Sliding Image, Lowered Signature) */}
+      {/* ABOUT ME */}
       <section className="px-5 pt-8 text-center">
         <div className="relative overflow-hidden rounded-[30px] border-2 border-primary bg-[#fcfcf8] p-7 shadow-[0_12px_40px_rgba(44,53,43,0.12)]">
           <div className="absolute top-16 right-[15%] grid grid-cols-5 gap-2 opacity-20">
@@ -900,16 +841,21 @@ export function MobileHome() {
             Crafting <span className="font-medium italic text-forest">Spaces</span> with Passion &amp; Precision.
           </h2>
 
-          <div className="relative z-10 mt-5">
-            <span className="mx-auto mb-3 block h-0.75 w-10 bg-gold" />
-            <p className="text-[14.5px] leading-[1.6] text-muted-foreground">
-              B.Tech Civil Engineer &amp; M.Tech Materials Science, AMC-approved Building Planner and Associate Member of the Institution of Engineers (India). Proprietor of Green Constructions — planning, construction and interiors built on quality, structural integrity and sustainable design.
+          <div className="relative z-10 mt-6 space-y-4 text-center">
+            <span className="mx-auto block h-0.75 w-10 bg-gold" />
+            <p className="text-[14.5px] leading-[1.65] font-medium text-[#1e1b4b]">
+              B.Tech Civil Engineer &amp; M.Tech Materials Science, AMC-approved Building Planner and Associate Member of the Institution of Engineers (India).
             </p>
-            
-            {/* Lowered Signature & Designation */}
-            <div className="mt-6 pt-2">
-              <p className="font-script text-[2.4rem] leading-none text-forest-deep">Anmay Saha</p>
-              <span className="mx-auto mt-3 block h-0.75 w-10 bg-gold" />
+            <p className="text-[14.5px] leading-[1.65] font-medium text-[#1e1b4b]">
+              Proprietor of <span className="font-bold text-primary">Green Constructions</span> — planning, construction and interiors built on quality, structural integrity and sustainable design.
+            </p>
+
+            {/* Distinct Format for Anmay Saha */}
+            <div className="mt-6 pt-3 text-center">
+              <p className="inline-block rounded-full bg-primary/10 px-5 py-1.5 text-[1.15rem] font-extrabold tracking-[0.16em] uppercase text-primary font-sans">
+                Anmay Saha
+              </p>
+              <span className="mx-auto mt-3.5 block h-0.75 w-10 bg-gold" />
               <div className="mt-3 space-y-1 text-[11px] font-semibold tracking-[0.18em] text-muted-foreground">
                 <p>CIVIL ENGINEER</p>
                 <p>BUILDING PLANNER</p>
@@ -918,7 +864,6 @@ export function MobileHome() {
             </div>
           </div>
 
-          {/* REPLACED 'Know More' BUTTONS: 'About Anmay' & 'Achievement' */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link to="/about" onClick={aboutSw.onClick(0)} className={switchBtn(aboutSw.active === 0)}>
               <span>About Anmay</span>
@@ -950,7 +895,7 @@ export function MobileHome() {
         </ol>
       </section>
 
-      {/* WHAT I DO (Centered Title, View All on right) */}
+      {/* WHAT I DO */}
       <section id="m-services" className="scroll-mt-20 pt-10">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 px-5">
           <div className="min-w-0 text-center col-span-2">
@@ -994,7 +939,7 @@ export function MobileHome() {
         <Dots count={serviceCardsData.length} active={serviceI} />
       </section>
 
-      {/* CTA / LET'S WORK TOGETHER (Medium Heading) */}
+      {/* CTA / LET'S WORK TOGETHER */}
       <section className="px-5 pt-10 text-center">
         <div className="m-leaf relative overflow-hidden rounded-4xl bg-forest-deep p-6 text-cream">
           <Leaf aria-hidden size={110} strokeWidth={0.7} className="absolute -right-4 -bottom-4 text-cream/10" />
@@ -1007,7 +952,7 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* MY BUSINESS (bidirectional sliding animation supporting scroll down & scroll up) */}
+      {/* MY BUSINESS */}
       <section ref={processRef} className="font-montserrat px-5 py-12 text-center overflow-hidden">
         <h2 className="text-[2rem] leading-[1.15] font-extrabold tracking-tight text-ink">My Business</h2>
         <span className="mx-auto mt-3 block h-0.75 w-10 bg-gold" />
@@ -1039,7 +984,7 @@ export function MobileHome() {
         </div>
       </section>
 
-      {/* GREEN CONSTRUCTIONS (Shifted slightly upward via negative margin) */}
+      {/* GREEN CONSTRUCTIONS */}
       <section className="relative isolate min-h-130 overflow-hidden -mt-4">
         <img src={siteAsset} alt="Engineer reviewing plans on a construction site" loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover object-[30%_center]" />
         <div className="absolute inset-0 -z-10 bg-linear-to-t from-forest-deep via-forest-deep/75 to-forest-deep/30" />
@@ -1078,7 +1023,7 @@ function MobileContact() {
         <form onSubmit={submit} className="mt-6 grid gap-3 text-left">
           <label className="sr-only" htmlFor="m-name">Full Name</label><input id="m-name" required placeholder="Full Name" className={field} />
           <label className="sr-only" htmlFor="m-phone">Phone Number</label><input id="m-phone" type="tel" placeholder="Phone Number" className={field} />
-          <label className="rv-sr-only" htmlFor="m-email">Email Address</label><input id="m-email" type="email" placeholder="Email Address" className={field} />
+          <label className="sr-only" htmlFor="m-email">Email Address</label><input id="m-email" type="email" placeholder="Email Address" className={field} />
           <label className="sr-only" htmlFor="m-service">Select Service</label>
           <select id="m-service" defaultValue="" className={field}><option value="" disabled>Select Service</option>{services.map((s) => <option key={s.title}>{s.title}</option>)}<option>Other</option></select>
           <label className="sr-only" htmlFor="m-msg">Message</label><textarea id="m-msg" rows={4} placeholder="Message" className={`${field} h-auto py-3`} />

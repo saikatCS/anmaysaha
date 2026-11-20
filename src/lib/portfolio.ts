@@ -138,7 +138,7 @@ export const artworks = [
 
 export const credentials = [
   'B.Tech in Civil Engineering',
-  'M.Tech in Materials Science',
+  'M.Tech in Materials Science Engineer',
   'AMC Approved Building Planner',
   'Associate Member — Institution of Engineers (India)',
 ];

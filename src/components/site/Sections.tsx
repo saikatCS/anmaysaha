@@ -34,7 +34,7 @@ const serviceImages = [card1, card2, card3, card4, card5, card6];
 
 const credentialCards = [
   { t: 'B.Tech', s: 'Civil Engineering', Icon: GraduationCap },
-  { t: 'M.Tech', s: 'Materials Science', Icon: GraduationCap },
+  { t: 'M.Tech', s: 'Materials Science Engineer', Icon: GraduationCap },
   { t: 'AMC Approved', s: 'Building Planner', Icon: Building2 },
   { t: 'Associate Member', s: 'Institution of Engineers (India)', Icon: Users },
 ];
