@@ -72,7 +72,7 @@ function FontStyle() {
 
 let logoVideoPlayed = false;
 
-function LogoVideo({ onDone }: { onDone: () => void }) {
+export function LogoVideo({ onDone }: { onDone: () => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   const readyRef = useRef(false);
   const resting = useRef(false);

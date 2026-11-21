@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Brand } from './Brand';
+import { LogoVideo } from '@/components/mobile';
 
 const links = [
   { label: 'Home', to: '/' }, { label: 'About', to: '/about' },
@@ -9,8 +10,26 @@ const links = [
   { label: 'Artworks', to: '/artworks' }, { label: 'Contact', to: '/contact' },
 ] as const;
 
+const desktopPrimaryLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'About', to: '/about' },
+  { label: 'Art World', to: '/artworks' },
+  { label: 'Life', href: 'https://www.facebook.com/share/1CWdHVbWVJ' },
+  { label: 'Green Construction', to: '/green-constructions' },
+  { label: 'Contacts', to: '/contact' },
+] as const;
+
+const desktopMoreLinks = [
+  { label: 'Unnati', href: 'https://www.facebook.com/' },
+  { label: 'Cretoverse', href: 'https://cretoverse.com' },
+] as const;
+
+const PHONE_NUMBER = '7005102084';
+const EMAIL_ADDRESS = 'anmaysaha@gmail.com';
+
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -21,20 +40,62 @@ export function Header() {
   return (
     <header className={`sticky top-0 z-50 bg-card/90 backdrop-blur-md transition-shadow ${scrolled ? 'shadow-soft' : ''}`}>
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
-        <Link to="/" onClick={() => setOpen(false)} className="min-w-0"><Brand /></Link>
+        <Link to="/" onClick={() => setOpen(false)} className="min-w-0 lg:hidden"><Brand /></Link>
+        <Link to="/" aria-label="Anmay Art home" onClick={() => setOpen(false)} className="hidden items-center gap-2 lg:flex">
+          <span className="h-13 w-13"><LogoVideo onDone={() => undefined} /></span>
+          <span className="hidden text-sm font-bold leading-tight text-primary xl:block">
+            Anmay<br />Art
+          </span>
+        </Link>
         <nav aria-label="Main navigation" className="hidden items-center justify-center gap-1 lg:flex">
-          {links.map((l) => (
-            <Link
-              key={l.label}
-              to={l.to}
-              {...('hash' in l ? { hash: l.hash } : {})}
-              activeOptions={{ exact: true, includeHash: true }}
-              className="relative rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-accent hover:text-primary"
-              activeProps={{ className: 'bg-accent text-primary' }}
-            >
-              {l.label}
-            </Link>
+          {desktopPrimaryLinks.map((l) => (
+            'href' in l ? (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-accent hover:text-primary xl:px-3 xl:text-sm"
+              >
+                {l.label}
+              </a>
+            ) : (
+              <Link
+                key={l.label}
+                to={l.to}
+                activeOptions={{ exact: true }}
+                className="relative whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-accent hover:text-primary xl:px-3 xl:text-sm"
+                activeProps={{ className: 'bg-accent text-primary' }}
+              >
+                {l.label}
+              </Link>
+            )
           ))}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setMoreOpen((value) => !value)}
+              className="whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-accent hover:text-primary xl:px-3 xl:text-sm"
+              aria-expanded={moreOpen}
+            >
+              More
+            </button>
+            {moreOpen && (
+              <div className="absolute right-0 top-[calc(100%+0.5rem)] w-44 rounded-2xl border border-border bg-card p-2 shadow-lift">
+                {desktopMoreLinks.map((l) => (
+                  <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => setMoreOpen(false)} className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground hover:bg-accent">
+                    {l.label}
+                  </a>
+                ))}
+                <a href={`tel:${PHONE_NUMBER}`} onClick={() => setMoreOpen(false)} className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground hover:bg-accent">
+                  Call: {PHONE_NUMBER}
+                </a>
+                <a href={`mailto:${EMAIL_ADDRESS}`} onClick={() => setMoreOpen(false)} className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground hover:bg-accent">
+                  Email: {EMAIL_ADDRESS}
+                </a>
+              </div>
+            )}
+          </div>
         </nav>
         <div className="flex items-center gap-2">
           <Link to="/contact" className="btn-brand hidden h-11 items-center gap-2 rounded-full px-6 text-sm font-bold sm:inline-flex">
