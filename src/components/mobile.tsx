@@ -167,10 +167,9 @@ export function MobileHeader() {
         }
         .nav-logo-in  { animation: navLogoIn 600ms ease-out both; }
         .nav-line     { transform-origin: bottom center; transform: scaleY(0); opacity: 0; }
-        .nav-title-1, .nav-title-2 { opacity: 0; }
+        .nav-title-1, .nav-title-2 { opacity: 1; }
         .nav-on .nav-line    { animation: navLineGrow 900ms cubic-bezier(.22,1,.36,1) both; }
-        .nav-on .nav-title-1 { animation: navTextIn 600ms ease-out 700ms both; }
-        .nav-on .nav-title-2 { animation: navTextIn 600ms ease-out 900ms both; }
+        .nav-on .nav-title-1, .nav-on .nav-title-2 { transform: none; }
         .nav-static .nav-line { transform: none; opacity: 1; }
         .nav-static .nav-title-1, .nav-static .nav-title-2 { opacity: 1; }
         .nav-static .nav-logo-in { animation: none; }

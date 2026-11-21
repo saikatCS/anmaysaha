@@ -16,8 +16,6 @@ import { ContactSection } from '@/components/site/ContactForm';
 import { images } from '@/lib/portfolio';
 import { MobileHome } from '@/components/mobile';
 import portrait from '@/assets/portrait.png';
-import card5 from '@/assets/card5.png';
-import siteAsset from '@/assets/green-constructions-site.png';
 import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/')({
@@ -77,32 +75,6 @@ function Home() {
     <SiteLayout>
       <MobileHome />
       <div className="hidden md:block">
-        <section aria-label="Choose Visual Art or Design and Construction" className="hidden h-[calc(100svh-76px)] grid-cols-2 lg:grid">
-          <Link to="/artworks" className="group relative isolate overflow-hidden border-r border-white/20">
-            <img src={card5} alt="Visual art" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/90 via-[#1a1a1a]/25 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full px-8 pb-10 lg:px-12 lg:pb-14 xl:px-16">
-              <p className="text-xs font-bold tracking-[0.18em] text-[#fafaf7]/80">ANMAY ART</p>
-              <h2 className="mt-3 font-serif text-5xl font-bold leading-none text-[#fafaf7] xl:text-6xl">Visual Art</h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-[#fafaf7]/85">Visual art, design and creative expression.</p>
-              <span className="mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-[#fafaf7] px-6 text-sm font-bold text-[#3a5227] transition-transform duration-300 group-hover:-translate-y-1">
-                Explore artworks <ArrowRight size={16} />
-              </span>
-            </div>
-          </Link>
-          <Link to="/green-constructions" className="group relative isolate overflow-hidden">
-            <img src={siteAsset} alt="Design and construction" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a]/90 via-[#1a1a1a]/25 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full px-8 pb-10 lg:px-12 lg:pb-14 xl:px-16">
-              <p className="text-xs font-bold tracking-[0.18em] text-[#fafaf7]/80">GREEN CONSTRUCTIONS</p>
-              <h2 className="mt-3 font-serif text-5xl font-bold leading-none text-[#fafaf7] xl:text-6xl">Design &amp; Construction</h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-[#fafaf7]/85">Planning, construction and interiors built on quality and sustainable design.</p>
-              <span className="mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-[#fafaf7] px-6 text-sm font-bold text-[#3a5227] transition-transform duration-300 group-hover:-translate-y-1">
-                Explore construction <ArrowRight size={16} />
-              </span>
-            </div>
-          </Link>
-        </section>
         <section className="relative overflow-hidden bg-background">
           <div aria-hidden className="hero-glow absolute inset-0" />
           <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-6 md:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-10">
