@@ -28,12 +28,14 @@ const artWorldVideos: VideoItem[] = [
   {
     id: "eixqBf1hlMM",
     embedUrl: "https://www.youtube.com/embed/eixqBf1hlMM",
-    title: "ArtWorld Video 1",
+    title: "Handmade Clay Ganesh Idol",
+    description: "A beautiful handmade clay Ganesh idol created by Anmay Saha.",
   },
   {
     id: "m4jvcOSqr_0",
     embedUrl: "https://www.youtube.com/embed/m4jvcOSqr_0",
     title: "ArtWorld Video 2",
+    description: "A video showcasing the artistic process of creating a unique piece.",
   },
   {
     id: "DhwGFAyVjQ8",
