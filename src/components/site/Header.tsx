@@ -1,3 +1,4 @@
+// cspell:ignore Unnati
 import { Link } from '@tanstack/react-router';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -16,7 +17,6 @@ const desktopPrimaryLinks = [
   { label: 'Art World', to: '/artworks' },
   { label: 'Life', href: 'https://www.facebook.com/share/1CWdHVbWVJ' },
   { label: 'Green Construction', to: '/green-constructions' },
-  { label: 'Contacts', to: '/contact' },
 ] as const;
 
 const desktopMoreLinks = [
