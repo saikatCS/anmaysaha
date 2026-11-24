@@ -19,25 +19,26 @@ import card4 from "@/assets/card4.png";
 import card5 from "@/assets/card5.png";
 import card6 from "@/assets/card6.png";
 
-const CRETOVERSE = "https://cretoverse.com";
-const UNNATI_FACEBOOK = "https://www.facebook.com/";
-const WEB_INNOVEX = "https://webinnovex360.online";
+export const CRETOVERSE = "https://cretoverse.com";
+const UNNATI_FACEBOOK = "https://www.facebook.com/unnati.organization/";
+export const WEB_INNOVEX = "https://webinnovex360.online";
 const LOGO_VIDEO = "/animatedlogo.mp4"; // file lives in the /public folder
+const SIGN_IMAGE_URL = "/assets/sign.png";
 const FACEBOOK_SHARE = "https://www.facebook.com/share/1CWdHVbWVJ"; // direct link to the Facebook share page for the website
 
 // Social Links
-const INSTAGRAM_LINK = "https://www.instagram.com/anmayart.com";
-const FACEBOOK_LINK = "https://www.facebook.com/";
-const YOUTUBE_LINK = "https://www.youtube.com/";
-const LINKEDIN_LINK = "https://www.linkedin.com/";
+export const INSTAGRAM_LINK = "https://www.instagram.com/anmayart.com";
+export const FACEBOOK_LINK = "https://www.facebook.com/anmay.saha";
+export const YOUTUBE_LINK = "https://www.youtube.com/@anmayart";
+export const LINKEDIN_LINK = "https://www.linkedin.com/authwall?trk=bf&trkInfo=AQEhtsghxJqH-wAAAaIPOOKgy4BL0dnit8T9Xw-oZjCwbO3Il48CHbFubkktRFhO6YjrOAHMsyfTjOAZT6YglIVfJfS5sUZ0CZ9tAsKAEIXv31KBVef3PuswY9Upc-gMSxp00Pg=&original_referer=&sessionRedirect=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fanmay-saha-390b491a5";
 
 // Contact Info
-const EMAIL_ADDRESS = "anmaysaha@gmail.com";
-const PHONE_NUMBER = "7005102084";
-const EMAIL_SUBJECT = encodeURIComponent("Contact for Building Planning");
-const EMAIL_BODY = encodeURIComponent("Hello Er. Anmay Saha,\n\nI would like to discuss building planning and design services with you.\n\nBest regards,");
+export const EMAIL_ADDRESS = "anmaysaha@gmail.com";
+export const PHONE_NUMBER = "7005102084";
+export const EMAIL_SUBJECT = encodeURIComponent("Contact for Building Planning");
+export const EMAIL_BODY = encodeURIComponent("Hello Er. Anmay Saha,\n\nI would like to discuss building planning and design services with you.\n\nBest regards,");
 
-const menuLinks = [
+export const menuLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Art World", to: "/artworks" },
@@ -48,7 +49,7 @@ const menuLinks = [
   { label: "Contacts", to: "/contact" },
 ] as const;
 
-const roles = [
+export const roles = [
   "Civil Engineer",
   "Material Science Engineer",
   "Artist",
@@ -61,11 +62,30 @@ const roles = [
 
 /* ---------------- Shell: header, menu, bottom nav, footer ---------------- */
 
-function FontStyle() {
+export function FontStyle() {
   return (
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
       .font-montserrat, .font-montserrat *:not(.font-script) { font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif !important; }
+      .m-grid-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+      .m-grid-bg::before {
+        content: ""; position: absolute; inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(106, 46, 192, 0.055) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(106, 46, 192, 0.055) 1px, transparent 1px);
+        background-size: 22px 22px;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+                mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+      }
+      .m-grid-bg::after {
+        content: ""; position: absolute; inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(44, 53, 43, 0.04) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(44, 53, 43, 0.04) 1px, transparent 1px);
+        background-size: 88px 88px;
+        -webkit-mask-image: radial-gradient(ellipse at 70% 15%, #000 0, transparent 70%);
+                mask-image: radial-gradient(ellipse at 70% 15%, #000 0, transparent 70%);
+      }
     `}</style>
   );
 }
@@ -199,8 +219,8 @@ export function MobileHeader() {
           <span aria-hidden className="nav-line block h-16 w-px shrink-0 bg-primary" />
 
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="nav-title-1 whitespace-nowrap text-[18px] font-bold text-ink">Visual Art</p>
-            <p className="nav-title-2 mt-0.5 whitespace-nowrap text-[12px] text-muted-foreground">Design &amp; Construction</p>
+            <p className="nav-title-1 whitespace-nowrap text-[18px] font-bold text-ink">Visual Art Design</p>
+            <p className="nav-title-2 mt-0.5 whitespace-nowrap text-[15px] font-bold text-muted-foreground"> &amp; Construction</p>
           </div>
 
           <div className="flex shrink-0 items-center">
@@ -483,7 +503,7 @@ export function MobileFooter() {
 }
 
 /* Custom Social SVG Icons */
-function InstagramIcon(props: { size?: number; className?: string }) {
+export function InstagramIcon(props: { size?: number; className?: string }) {
   return (
     <svg width={props.size || 20} height={props.size || 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className}>
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -493,7 +513,7 @@ function InstagramIcon(props: { size?: number; className?: string }) {
   );
 }
 
-function FacebookIcon(props: { size?: number; className?: string }) {
+export function FacebookIcon(props: { size?: number; className?: string }) {
   return (
     <svg width={props.size || 20} height={props.size || 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className}>
       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
@@ -501,7 +521,7 @@ function FacebookIcon(props: { size?: number; className?: string }) {
   );
 }
 
-function YoutubeIcon(props: { size?: number; className?: string }) {
+export function YoutubeIcon(props: { size?: number; className?: string }) {
   return (
     <svg width={props.size || 20} height={props.size || 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className}>
       <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
@@ -510,7 +530,7 @@ function YoutubeIcon(props: { size?: number; className?: string }) {
   );
 }
 
-function LinkedinIcon(props: { size?: number; className?: string }) {
+export function LinkedinIcon(props: { size?: number; className?: string }) {
   return (
     <svg width={props.size || 20} height={props.size || 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={props.className}>
       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
@@ -591,7 +611,7 @@ export function MobileLightbox({ items, index, onClose, onIndex }: { items: { sr
 
 /* ---------------- Home / MobileHome Component ---------------- */
 
-const credCards = [
+export const credCards = [
   { t: "B.Tech", s: "Civil Engineering", Icon: GraduationCap },
   { t: "M.Tech", s: "Materials Science Engineer", Icon: GraduationCap },
   { t: "Grade I", s: "Building Planner AMC", Icon: Building2 },
@@ -609,7 +629,7 @@ type BusinessCard = {
   logo?: string;
 };
 
-const businessCards: BusinessCard[] = [
+export const businessCards: BusinessCard[] = [
   { t: "Green Construction", d: "Planning, construction and interiors built on quality and sustainable design.", Icon: Building2 },
   { t: "Go Green Enterprise", d: "A sustainable enterprise for a greener tomorrow.", Icon: Leaf },
   { t: "Cretoverse", d: "A social and portfolio platform for India's creative community.", Icon: Sparkles },
@@ -625,7 +645,7 @@ type ServiceCard = {
   etc?: boolean;
 };
 
-const serviceCardsData: ServiceCard[] = [
+export const serviceCardsData: ServiceCard[] = [
   { t: "Planning", Icon: DraftingCompass, img: card1, items: ["Buildings", "Bridges", "Temples", "Parks", "Reservoirs", "Roads"], etc: true },
   { t: "Construction", Icon: HardHat, img: card2, desc: "Construction of buildings and other structures." },
   { t: "Interior Designing & Execution", Icon: Paintbrush, img: card3, items: ["Hotels", "Residences", "Parks", "Resorts"], etc: true },
@@ -634,7 +654,7 @@ const serviceCardsData: ServiceCard[] = [
   { t: "Writing", Icon: FileText, img: card6, desc: "Creative and thoughtful writing." },
 ];
 
-const useFeatured = () => {
+export const useFeatured = () => {
   const projects = useProjects();
   return projects
     .filter((p) => Boolean(p.image) && Boolean(p.remoteId) && Boolean(p.location) && !/to be confirmed/i.test(p.location))
@@ -759,12 +779,13 @@ export function MobileHome() {
   }, []);
 
   return (
-    <div className="font-montserrat overflow-x-hidden bg-cream md:hidden">
+    <div className="font-montserrat relative isolate overflow-x-hidden bg-cream md:hidden">
       <FontStyle />
+      <div aria-hidden className="m-grid-bg" />
       {/* HERO / SEO Optimized Centered Intro */}
-      <section className="relative px-5 pt-6 pb-4 text-center">
+      <section className="relative z-10 px-5 pt-6 pb-4 text-center">
         <div className="m-rise">
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p>
+          {/* <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary">CIVIL ENGINEER &amp; BUILDING PLANNER</p> */}
           <div className="mt-2">
             <span className="font-serif text-[2.2rem] leading-tight text-ink block font-normal">
               Hello! 
@@ -786,7 +807,7 @@ export function MobileHome() {
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/projects" onClick={heroSw.onClick(0)} className={switchBtn(heroSw.active === 0)}>Explore my work <ArrowRight size={15} /></Link>
+            <Link to="/about" onClick={heroSw.onClick(0)} className={switchBtn(heroSw.active === 0)}>About Me <ArrowRight size={15} /></Link>
             <Link to="/contact" onClick={heroSw.onClick(1)} className={switchBtn(heroSw.active === 1)}>Contact me <ArrowUpRight size={15} /></Link>
           </div>
         </div>
@@ -806,7 +827,7 @@ export function MobileHome() {
       </section>
 
       {/* CREDENTIALS */}
-      <section aria-label="Credentials" className="pt-6">
+      <section aria-label="Credentials" className="relative z-10 pt-6">
         <div ref={credRef} aria-label="Credentials, swipe to explore" className="m-noscroll flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1">
           {credCards.map(({ t, s, Icon }) => (
             <div key={t + s} className="m-credential-circle flex h-33 w-33 shrink-0 snap-start flex-col items-center justify-center px-3 text-center">
@@ -820,7 +841,7 @@ export function MobileHome() {
       </section>
 
       {/* ABOUT ME */}
-      <section className="px-5 pt-8 text-center">
+      <section className="relative z-10 px-5 pt-8 text-center">
         <div className="relative overflow-hidden rounded-[30px] border-2 border-primary bg-[#fcfcf8] p-7 shadow-[0_12px_40px_rgba(44,53,43,0.12)]">
           <div className="absolute top-16 right-[15%] grid grid-cols-5 gap-2 opacity-20">
             {Array.from({ length: 15 }).map((_, i) => <span key={i} className="h-1 w-1 rounded-full bg-primary" />)}
@@ -832,28 +853,48 @@ export function MobileHome() {
 
           <div className="relative z-10 flex items-center justify-center gap-2">
             <span className="h-0.75 w-6 bg-gold" />
-            <p className="text-[12px] font-semibold tracking-[0.24em] text-primary">ABOUT ME</p>
+            <p className="text-[12px] font-semibold tracking-[0.24em] text-primary">About me</p>
             <span className="h-0.75 w-6 bg-gold" />
           </div>
 
-          <h2 className="relative z-10 mt-5 font-serif text-[2rem] leading-[1.1] font-semibold tracking-[-0.035em] text-ink">
-            Crafting <span className="font-medium italic text-forest">Spaces</span> with Passion &amp; Precision.
+          <h2 className="relative z-10 mt-5 font-serif text-[1.75rem] leading-[1.18] font-semibold tracking-[-0.025em] text-ink">
+            Anmay Saha, an Engineer &amp; an Artist with Wide Experience in the Field
           </h2>
 
           <div className="relative z-10 mt-6 space-y-4 text-center">
             <span className="mx-auto block h-0.75 w-10 bg-gold" />
-            <p className="text-[14.5px] leading-[1.65] font-medium text-[#1e1b4b]">
-              B.Tech Civil Engineer &amp; M.Tech Materials Science, AMC-approved Building Planner and Associate Member of the Institution of Engineers (India).
+            <p className="text-[14px] leading-[1.65] font-medium text-[#1e1b4b]">
+              Anmay Saha is a B.Tech Civil Engineer and M.Tech Engineer in Materials Science, an AMC approved Building Planner, and Associate Member of the Institution of Engineers (India).
             </p>
-            <p className="text-[14.5px] leading-[1.65] font-medium text-[#1e1b4b]">
-              Proprietor of <span className="font-bold text-primary">Green Constructions</span> — planning, construction and interiors built on quality, structural integrity and sustainable design.
+            <p className="text-[14px] leading-[1.65] font-medium text-[#1e1b4b]">
+              He is doing all his businesses under the name of anmayarts.com. He is the proprietor of “Green Constructions”, a professionally managed firm offering comprehensive building planning, construction, and interior design services, with a strong commitment to quality, structural integrity, and sustainable design practices.
             </p>
 
-            {/* Distinct Format for Anmay Saha */}
-            <div className="mt-6 pt-3 text-center">
-              <p className="inline-block rounded-full bg-primary/10 px-5 py-1.5 text-[1.15rem] font-extrabold tracking-[0.16em] uppercase text-primary font-sans">
-                Anmay Saha
-              </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link to="/projects" onClick={aboutSw.onClick(0)} className={switchBtn(aboutSw.active === 0)}>
+                <span>Explore my work</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-cream">
+                  <ArrowRight size={13} strokeWidth={2.5} />
+                </span>
+              </Link>
+              <Link to="/achievement" onClick={aboutSw.onClick(1)} className={switchBtn(aboutSw.active === 1)}>
+                <span>Achievement</span>
+                <Award size={15} className={`transition-colors duration-300 ${aboutSw.active === 1 ? "text-cream" : "text-primary"}`} />
+              </Link>
+            </div>
+
+            <blockquote className="mt-6 font-serif text-[13.5px] italic leading-relaxed text-ink/90">
+              “Life is not about earning money, but about creating something for humanity that helps, entertains, and elevates the way we live.”
+            </blockquote>
+
+            {/* Signature Image instead of Anmay Saha text */}
+            <div className="mt-6 pt-2 text-center">
+              <img
+                src={SIGN_IMAGE_URL}
+                alt="Anmay Saha signature"
+                loading="lazy"
+                className="mx-auto h-16 w-auto max-w-full object-contain select-none"
+              />
               <span className="mx-auto mt-3.5 block h-0.75 w-10 bg-gold" />
               <div className="mt-3 space-y-1 text-[11px] font-semibold tracking-[0.18em] text-muted-foreground">
                 <p>CIVIL ENGINEER</p>
@@ -862,24 +903,11 @@ export function MobileHome() {
               </div>
             </div>
           </div>
-
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/about" onClick={aboutSw.onClick(0)} className={switchBtn(aboutSw.active === 0)}>
-              <span>About Anmay</span>
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-cream">
-                <ArrowRight size={13} strokeWidth={2.5} />
-              </span>
-            </Link>
-            <Link to="/achievement" onClick={aboutSw.onClick(1)} className={switchBtn(aboutSw.active === 1)}>
-              <span>Achievement</span>
-              <Award size={15} className={`transition-colors duration-300 ${aboutSw.active === 1 ? "text-cream" : "text-primary"}`} />
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* EXPERIENCE / PROFESSIONAL JOURNEY */}
-      <section id="m-experience" className="mt-12 scroll-mt-20 bg-card px-5 py-12 text-center">
+      <section id="m-experience" className="relative z-10 mt-12 scroll-mt-20 bg-card px-5 py-12 text-center">
         <Label>Professional journey</Label>
         <Heading>A Practice<br />Built on Purpose.</Heading>
         <ol className="relative mt-8 max-w-sm mx-auto text-left border-l-2 border-primary/40 pl-6">
@@ -895,7 +923,7 @@ export function MobileHome() {
       </section>
 
       {/* WHAT I DO */}
-      <section id="m-services" className="scroll-mt-20 pt-10">
+      <section id="m-services" className="relative z-10 scroll-mt-20 pt-10">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 px-5">
           <div className="min-w-0 text-center col-span-2">
             <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-primary">My services</p>
@@ -939,7 +967,7 @@ export function MobileHome() {
       </section>
 
       {/* CTA / LET'S WORK TOGETHER */}
-      <section className="px-5 pt-10 text-center">
+      <section className="relative z-10 px-5 pt-10 text-center">
         <div className="m-leaf relative overflow-hidden rounded-4xl bg-forest-deep p-6 text-cream">
           <Leaf aria-hidden size={110} strokeWidth={0.7} className="absolute -right-4 -bottom-4 text-cream/10" />
           <Label light>Let's work together</Label>
@@ -952,7 +980,7 @@ export function MobileHome() {
       </section>
 
       {/* MY BUSINESS */}
-      <section ref={processRef} className="font-montserrat px-5 py-12 text-center overflow-hidden">
+      <section ref={processRef} className="relative z-10 font-montserrat px-5 py-12 text-center overflow-hidden">
         <h2 className="text-[2rem] leading-[1.15] font-extrabold tracking-tight text-ink">My Business</h2>
         <span className="mx-auto mt-3 block h-0.75 w-10 bg-gold" />
         <div className="mt-7 grid gap-3">
@@ -1008,7 +1036,7 @@ function MobileContact() {
   const submit = (e: FormEvent) => { e.preventDefault(); setSent(true); };
   const field = "h-12 w-full rounded-xl border border-forest-deep/15 bg-card px-4 text-[15px] text-ink placeholder:text-muted-foreground focus:border-primary focus:outline-none";
   return (
-    <section id="m-contact" className="scroll-mt-20 px-5 py-12 text-center">
+    <section id="m-contact" className="relative z-10 scroll-mt-20 px-5 py-12 text-center">
       <Label>Let's work together</Label>
       <Heading>Have a Project<br />in Mind?</Heading>
       <p className="mt-3 flex items-center justify-center gap-2 text-[14px] text-muted-foreground"><MapPin size={16} className="text-primary" /> {contact.location}</p>

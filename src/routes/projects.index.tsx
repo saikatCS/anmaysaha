@@ -23,7 +23,7 @@ export const Route = createFileRoute("/projects/")({
   component: Projects,
 });
 
-const UNNATI_FACEBOOK = "https://www.facebook.com/";
+const UNNATI_FACEBOOK = "https://www.facebook.com/unnati.organization/";
 const BOOKS_PDF_PATH: string | null = null;
 
 const filterCategories = [

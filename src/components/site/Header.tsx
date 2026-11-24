@@ -20,7 +20,7 @@ const desktopPrimaryLinks = [
 ] as const;
 
 const desktopMoreLinks = [
-  { label: 'Unnati', href: 'https://www.facebook.com/' },
+  { label: 'Unnati', href: 'https://www.facebook.com/unnati.organization/' },
   { label: 'Cretoverse', href: 'https://cretoverse.com' },
 ] as const;
 
